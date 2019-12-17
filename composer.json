@@ -1,5 +1,13 @@
 {
+    "autoload": {
+        "psr-4": {
+            "TestSeparator\\": ["src/"]
+        }
+    },
     "require": {
-        "drupol/phpartition": "^0.1.2"
+        "php": ">=7.1",
+        "drupol/phpartition": "^0.1.2",
+        "symfony/console": "^4.4",
+        "ext-json": "*"
     }
 }
