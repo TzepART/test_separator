@@ -1,0 +1,5 @@
+{
+    "require": {
+        "drupol/phpartition": "^0.1.2"
+    }
+}
