@@ -11,8 +11,6 @@ use TestSeparator\Handler\SeparateTestsHandler;
 
 class SeparateTestsCommand extends Command
 {
-    protected static $defaultName = 'app:separate-tests';
-
     /**
      * @var SeparateTestsHandler
      */
