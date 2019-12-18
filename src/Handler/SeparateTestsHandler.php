@@ -11,6 +11,23 @@ use TestSeparator\Model\TestInfo;
 class SeparateTestsHandler
 {
     /**
+     * @var FileSystemHelper
+     */
+    private $fileSystemHelper;
+
+    /**
+     * @param FileSystemHelper $fileSystemHelper
+     *
+     * @return $this
+     */
+    public function setFileSystemHelper(FileSystemHelper $fileSystemHelper)
+    {
+        $this->fileSystemHelper = $fileSystemHelper;
+
+        return $this;
+    }
+
+    /**
      * @param string $suitesFile
      * @param string $baseTestDirPath
      *
@@ -31,7 +48,7 @@ class SeparateTestsHandler
             $dir       = $matches[1];
             $test      = $matches[2];
             $time      = (int) $strArray[2];
-            $file      = $this->getTestFilePath($baseTestDirPath, $test, $dir);
+            $file      = $this->fileSystemHelper->getTestFilePath($baseTestDirPath, $test, $dir);
             $results[] = new TestInfo($dir, $file, $test, $time);
         }
 
@@ -107,20 +124,4 @@ class SeparateTestsHandler
             }
         }
     }
-
-    /**
-     * @param string $baseTestDirPath
-     * @param        $test
-     * @param        $dir
-     *
-     * @return string
-     */
-    protected function getTestFilePath(string $baseTestDirPath, $test, $dir): string
-    {
-        $patternCommand = 'grep -R "%s" -l ' . $baseTestDirPath . '%s | head -1';
-        $file           = trim(shell_exec(sprintf($patternCommand, $test, $dir)));
-
-        return $file;
-    }
-
 }

@@ -1,0 +1,12 @@
+tests/integration/Shipment
+tests/integration/OrdersDeliveryMethod
+tests/integrationsoap/Order
+tests/integrationflow/Shipment
+tests/integration/Command
+tests/integrationflow/Import
+tests/integration/NotificationSubscription
+tests/integration/StockState
+tests/integration/OrdersCustomer
+tests/integrationflow/SupplierReturn
+tests/integration/Monitoring
+tests/integration/DI

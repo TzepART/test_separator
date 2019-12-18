@@ -1,0 +1,10 @@
+tests/integration/ProcessState
+tests/functional/SC
+tests/integration/Product
+tests/integration/File
+tests/integrationsoap/Shipment
+tests/integration/SupplierReturn
+tests/integration/Queue
+tests/integration/ProductSize
+tests/functional/AppBundle
+tests/integration/OrderStatus
