@@ -1,61 +1,60 @@
 <?php
 declare(strict_types=1);
 
-
 namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
+use TestSeparator\Model\GroupBlockInfo;
+use TestSeparator\Model\TestInfo;
 
 
 class SeparateTestsHandler
 {
     /**
      * @param string $suitesFile
-     * @param string $resultFile
      * @param string $baseTestDirPath
+     *
+     * @return TestInfo[] | array
      */
-    public function reFormateSuitesFile(string $suitesFile, string $resultFile, string $baseTestDirPath): void
+    public function reFormateSuitesFile(string $suitesFile, string $baseTestDirPath): array
     {
-        $strings        = file($suitesFile);
-        $patternCommand = 'grep -R "%s" -l ' . $baseTestDirPath . '%s | head -1';
-        file_put_contents($resultFile, 'dir; file; test; time;' . PHP_EOL);
+        $strings = file($suitesFile);
+        $results = [];
 
-// remove head line
+        // remove head line
         array_shift($strings);
 
         foreach ($strings as $index => $string) {
             $string   = str_replace('"', '', $string);
             $strArray = explode(',', $string);
             preg_match('/Support\.([a-z]+)\.([a-zA-Z]+)/', $strArray[1], $matches);
-            $dir  = $matches[1];
-            $test = $matches[2];
-            $time = (int) $strArray[2];
-            $file = trim(shell_exec(sprintf($patternCommand, $test, $dir)));
-            file_put_contents($resultFile, sprintf('%s; %s; %s; %d;' . PHP_EOL, $dir, $file, $test, $time), FILE_APPEND);
+            $dir       = $matches[1];
+            $test      = $matches[2];
+            $time      = (int) $strArray[2];
+            $file      = $this->getTestFilePath($baseTestDirPath, $test, $dir);
+            $results[] = new TestInfo($dir, $file, $test, $time);
         }
+
+        return $results;
     }
 
 
     /**
-     * @param string $resultFile
-     * @param string $timeResultsFile
-     * @param string $baseTestDirPath
+     * @param TestInfo[] $testInfoItems
+     * @param string     $baseTestDirPath
      *
-     * @return void
+     * @return array
      */
-    public function summTimeByDirectories(string $resultFile, string $timeResultsFile, string $baseTestDirPath): void
+    public function summTimeByDirectories(array $testInfoItems, string $baseTestDirPath): array
     {
-        $strings = file($resultFile);
-        array_shift($strings);
         $timeResults = [];
         $summ        = 0;
-        foreach ($strings as $index => $string) {
-            $arResult = explode(';', $string);
-            $rootDir  = $arResult[0];
-            preg_match('/([A-Za-z]+)\//', trim(str_replace($baseTestDirPath . $rootDir . '/', '', $arResult[1])), $matches);
+        foreach ($testInfoItems as $testInfoItem) {
+            $rootDir = $testInfoItem->getDir();
+            preg_match('/([A-Za-z]+)\//', trim(str_replace($baseTestDirPath . $rootDir . '/', '', $testInfoItem->getFile())), $matches);
             $dir    = $matches[1];
             $keyDir = $rootDir . '/' . $dir;
-            $time   = round(((int) $arResult[3]) / 1000, 2);
+            $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);
             if (isset($timeResults[$keyDir])) {
                 $timeResults[$keyDir] = round($timeResults[$keyDir] + $time, 2);
             } else {
@@ -63,52 +62,36 @@ class SeparateTestsHandler
             }
             $summ += $time;
         }
-        file_put_contents($timeResultsFile, json_encode($timeResults));
+
+        return $timeResults;
     }
 
 
     /**
-     * @param string $timeResultsFile
-     * @param string $groupSeparatingFile
-     * @param int    $countSuit
+     * @param array $timeResults
+     * @param int   $countSuit
      *
-     * @return void
+     * @return array
      */
-    public function separateDirectoriesByTime(string $timeResultsFile, string $groupSeparatingFile, int $countSuit): void
+    public function separateDirectoriesByTime(array $timeResults, int $countSuit): array
     {
-        $timeResults = json_decode(file_get_contents($timeResultsFile), true);
-        $greedy      = new Greedy();
+        $greedy = new Greedy();
         $greedy->setData($timeResults);
         $greedy->setSize($countSuit);
         $result = $greedy->getResult();
 
-        $resultWithDir = [];
+        $groupBlockInfoItems = [];
         foreach ($result as $key => $block) {
+            $groupBlockInfo = new GroupBlockInfo();
             foreach ($block as $time) {
-                $keyDir                                   = array_search($time, $timeResults);
-                $resultWithDir[$key]['dir_time'][$keyDir] = $time;
+                $keyDir = array_search($time, $timeResults);
+                $groupBlockInfo->addDirTime($keyDir, $time);
             }
-            $resultWithDir[$key]['summ_time'] = array_sum($block);
-        }
-        file_put_contents($groupSeparatingFile, json_encode($resultWithDir));
-    }
-
-    public function scanAllDir($dir)
-    {
-        $result = [];
-        foreach (scandir($dir) as $filename) {
-            if ($filename[0] === '.') continue;
-            $filePath = $dir . '/' . $filename;
-            if (is_dir($filePath)) {
-                foreach ($this->scanAllDir($filePath) as $childFilename) {
-                    $result[] = $filename . '/' . $childFilename;
-                }
-            } else {
-                $result[] = $filename;
-            }
+            $groupBlockInfo->setSummTime(array_sum($block));
+            $groupBlockInfoItems[] = $groupBlockInfo;
         }
 
-        return $result;
+        return $groupBlockInfoItems;
     }
 
     /**
@@ -123,6 +106,21 @@ class SeparateTestsHandler
                 unlink($filePath); // delete file
             }
         }
+    }
+
+    /**
+     * @param string $baseTestDirPath
+     * @param        $test
+     * @param        $dir
+     *
+     * @return string
+     */
+    protected function getTestFilePath(string $baseTestDirPath, $test, $dir): string
+    {
+        $patternCommand = 'grep -R "%s" -l ' . $baseTestDirPath . '%s | head -1';
+        $file           = trim(shell_exec(sprintf($patternCommand, $test, $dir)));
+
+        return $file;
     }
 
 }
