@@ -4,6 +4,7 @@
 use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\SeparateTestsHandler;
+use \TestSeparator\Handler\FileSystemHelper;
 
 $autoloadPaths = [
     __DIR__ . '/../../autoload.php',
@@ -19,6 +20,9 @@ foreach ($autoloadPaths as $path) {
 
 $application = new Application();
 
-$application->add(new SeparateTestsCommand(new SeparateTestsHandler(),'separate-tests'));
+$separateHelper = (new SeparateTestsHandler())
+    ->setFileSystemHelper(new FileSystemHelper());
+
+$application->add(new SeparateTestsCommand($separateHelper,'separate-tests'));
 
 $application->run();

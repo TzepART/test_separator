@@ -1,0 +1,6 @@
+tests/integration/OrderUpdate
+tests/integration/Item
+tests/integration/NotificationMessage
+tests/integration/Sessions
+tests/integration/SystemExchange
+tests/functional/Platform
