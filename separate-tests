@@ -23,6 +23,6 @@ $application = new Application();
 $separateHelper = (new SeparateTestsHandler())
     ->setFileSystemHelper(new FileSystemHelper());
 
-$application->add(new SeparateTestsCommand($separateHelper,'separate-tests'));
+$application->add(new SeparateTestsCommand($separateHelper,'separate'));
 
 $application->run();
