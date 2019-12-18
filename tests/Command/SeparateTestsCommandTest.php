@@ -17,7 +17,7 @@ class SeparateTestsCommandTest extends TestCase
     public function dataRun()
     {
         return [
-            'separate-tests' => [new SeparateTestsCommand(new SeparateTestsHandler(), 'separate-tests')],
+            'separate-tests' => [new SeparateTestsCommand(new SeparateTestsHandler(), 'separate')],
         ];
     }
 
