@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestSeparator\Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
+use TestSeparator\Handler\DirectoryDeepService;
 use TestSeparator\Handler\FileSystemHelper;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
@@ -32,8 +33,10 @@ class SeparateTestsHandlerTest extends TestCase
                     }
                 )
             );
+        /** @var DirectoryDeepService $levelDeepHelper */
+        $levelDeepHelper = $this->createMock(DirectoryDeepService::class);
 
-        $this->handler = (new SeparateTestsHandler())->setFileSystemHelper($fileSystemHelper);
+        $this->handler = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
     }
 
     /**
