@@ -16,15 +16,19 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @param FileSystemHelper $fileSystemHelper
-     *
-     * @return $this
+     * @var LevelDeepInterface
      */
-    public function setFileSystemHelper(FileSystemHelper $fileSystemHelper)
+    private $levelDeepHelper;
+
+    /**
+     * @param FileSystemInterface $fileSystemHelper
+     * @param LevelDeepInterface  $levelDeepHelper
+     *
+     */
+    public function __construct(FileSystemInterface $fileSystemHelper, LevelDeepInterface $levelDeepHelper)
     {
         $this->fileSystemHelper = $fileSystemHelper;
-
-        return $this;
+        $this->levelDeepHelper = $levelDeepHelper;
     }
 
     /**

@@ -5,6 +5,8 @@ use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\SeparateTestsHandler;
 use \TestSeparator\Handler\FileSystemHelper;
+use \TestSeparator\Handler\DirectoryDeepService;
+use \TestSeparator\Handler\ServicesSeparateTestsFactory;
 
 $autoloadPaths = [
     __DIR__ . '/../../autoload.php',
@@ -20,8 +22,10 @@ foreach ($autoloadPaths as $path) {
 
 $application = new Application();
 
-$separateHelper = (new SeparateTestsHandler())
-    ->setFileSystemHelper(new FileSystemHelper());
+$fileSystemHelper = ServicesSeparateTestsFactory::makeFileSystemHelper(FileSystemHelper::class);
+$levelDeepHelper = ServicesSeparateTestsFactory::makeLevelDeepService(DirectoryDeepService::class);
+
+$separateHelper = new SeparateTestsHandler($fileSystemHelper,$levelDeepHelper);
 
 $application->add(new SeparateTestsCommand($separateHelper,'separate'));
 
