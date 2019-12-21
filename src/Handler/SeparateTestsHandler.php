@@ -6,13 +6,14 @@ namespace TestSeparator\Handler;
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
+use TestSeparator\Strategy\FilePath\TestFilePathInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
 
 
 class SeparateTestsHandler
 {
     /**
-     * @var FileSystemHelper
+     * @var TestFilePathInterface
      */
     private $fileSystemHelper;
 
@@ -22,23 +23,27 @@ class SeparateTestsHandler
     private $levelDeepHelper;
 
     /**
-     * @param FileSystemInterface        $fileSystemHelper
+     * @var string
+     */
+    private $baseTestDirPath;
+
+    /**
+     * @param TestFilePathInterface      $fileSystemHelper
      * @param LevelDeepStrategyInterface $levelDeepHelper
      *
      */
-    public function __construct(FileSystemInterface $fileSystemHelper, LevelDeepStrategyInterface $levelDeepHelper)
+    public function __construct(TestFilePathInterface $fileSystemHelper, LevelDeepStrategyInterface $levelDeepHelper)
     {
         $this->fileSystemHelper = $fileSystemHelper;
-        $this->levelDeepHelper = $levelDeepHelper;
+        $this->levelDeepHelper  = $levelDeepHelper;
     }
 
     /**
      * @param string $suitesFile
-     * @param string $baseTestDirPath
      *
      * @return TestInfo[] | array
      */
-    public function reFormateSuitesFile(string $suitesFile, string $baseTestDirPath): array
+    public function reFormateSuitesFile(string $suitesFile): array
     {
         $strings = file($suitesFile);
         $results = [];
@@ -53,7 +58,7 @@ class SeparateTestsHandler
             $dir       = $matches[1];
             $test      = $matches[2];
             $time      = (int) $strArray[2];
-            $file      = $this->fileSystemHelper->getTestFilePath($baseTestDirPath, $test, $dir);
+            $file      = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
             $results[] = new TestInfo($dir, $file, $test, $time);
         }
 
@@ -63,17 +68,16 @@ class SeparateTestsHandler
 
     /**
      * @param TestInfo[] $testInfoItems
-     * @param string     $baseTestDirPath
      *
      * @return array
      */
-    public function summTimeByDirectories(array $testInfoItems, string $baseTestDirPath): array
+    public function summTimeByDirectories(array $testInfoItems): array
     {
         $timeResults = [];
         $summ        = 0;
         foreach ($testInfoItems as $testInfoItem) {
             $rootDir = $testInfoItem->getDir();
-            preg_match('/([A-Za-z]+)\//', trim(str_replace($baseTestDirPath . $rootDir . '/', '', $testInfoItem->getFile())), $matches);
+            preg_match('/([A-Za-z]+)\//', trim(str_replace($this->getBaseTestDirPath() . $rootDir . '/', '', $testInfoItem->getFile())), $matches);
             $dir    = $matches[1];
             $keyDir = $rootDir . '/' . $dir;
             $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);
@@ -128,5 +132,28 @@ class SeparateTestsHandler
                 unlink($filePath); // delete file
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseTestDirPath(): string
+    {
+        return $this->baseTestDirPath;
+    }
+
+    /**
+     * TODO change on setting by config
+     *
+     * @param string $baseTestDirPath
+     *
+     * @return $this
+     */
+    public function setBaseTestDirPath(string $baseTestDirPath)
+    {
+        $this->baseTestDirPath = $baseTestDirPath;
+        $this->fileSystemHelper->setBaseTestDirPath($baseTestDirPath);
+
+        return $this;
     }
 }

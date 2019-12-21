@@ -81,8 +81,10 @@ class SeparateTestsCommand extends Command
      */
     private function separateTests(string $suitesFile, string $baseTestDirPath, string $groupDirPath, int $countSuit)
     {
-        $testInfoArray    = $this->separateTestsHandler->reFormateSuitesFile($suitesFile, $baseTestDirPath);
-        $testDirsWithTime = $this->separateTestsHandler->summTimeByDirectories($testInfoArray, $baseTestDirPath);
+        $this->separateTestsHandler->setBaseTestDirPath($baseTestDirPath);
+
+        $testInfoArray    = $this->separateTestsHandler->reFormateSuitesFile($suitesFile);
+        $testDirsWithTime = $this->separateTestsHandler->summTimeByDirectories($testInfoArray);
         $arGroups         = $this->separateTestsHandler->separateDirectoriesByTime($testDirsWithTime, $countSuit);
 
         // remove all group files

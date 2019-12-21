@@ -21,7 +21,7 @@ foreach ($autoloadPaths as $path) {
 $application = new Application();
 
 // TODO make builder
-$fileSystemHelper = ServicesSeparateTestsFactory::makeFileSystemHelper();
+$fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper();
 $levelDeepHelper  = ServicesSeparateTestsFactory::makeLevelDeepService(ServicesSeparateTestsFactory::DIRECTORY_LEVEL);
 
 $separateHelper = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
