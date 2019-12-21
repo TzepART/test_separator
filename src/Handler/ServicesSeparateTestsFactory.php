@@ -5,7 +5,7 @@ namespace TestSeparator\Handler;
 
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
 use TestSeparator\Strategy\FileDeepStrategyService;
-use TestSeparator\Strategy\FilePath\TestFilePathHelper;
+use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
 use TestSeparator\Strategy\FilePath\TestFilePathInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
 use TestSeparator\Strategy\TestDeepStrategyService;
@@ -39,6 +39,6 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
     {
-        return new TestFilePathHelper();
+        return new FilePathByFileSystemHelper();
     }
 }

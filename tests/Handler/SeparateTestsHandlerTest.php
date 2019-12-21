@@ -5,7 +5,7 @@ namespace TestSeparator\Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
-use \TestSeparator\Strategy\FilePath\TestFilePathHelper;
+use \TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
@@ -21,10 +21,10 @@ class SeparateTestsHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $fileSystemHelper = $this->createMock(TestFilePathHelper::class);
+        $fileSystemHelper = $this->createMock(FilePathByFileSystemHelper::class);
         $mockResults      = json_decode(file_get_contents(__DIR__ . '/../fixtures/file-system-mock.json'), true);
 
-        /** @var TestFilePathHelper $fileSystemHelper */
+        /** @var FilePathByFileSystemHelper $fileSystemHelper */
         $fileSystemHelper->method('getFilePathByTestName')
             ->will(
                 $this->returnCallback(
