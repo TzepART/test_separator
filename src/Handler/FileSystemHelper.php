@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 
-class FileSystemHelper
+class FileSystemHelper implements FileSystemInterface
 {
 
     /**

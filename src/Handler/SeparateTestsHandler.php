@@ -6,6 +6,7 @@ namespace TestSeparator\Handler;
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
+use TestSeparator\Strategy\LevelDeepStrategyInterface;
 
 
 class SeparateTestsHandler
@@ -16,15 +17,19 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @param FileSystemHelper $fileSystemHelper
-     *
-     * @return $this
+     * @var LevelDeepStrategyInterface
      */
-    public function setFileSystemHelper(FileSystemHelper $fileSystemHelper)
+    private $levelDeepHelper;
+
+    /**
+     * @param FileSystemInterface        $fileSystemHelper
+     * @param LevelDeepStrategyInterface $levelDeepHelper
+     *
+     */
+    public function __construct(FileSystemInterface $fileSystemHelper, LevelDeepStrategyInterface $levelDeepHelper)
     {
         $this->fileSystemHelper = $fileSystemHelper;
-
-        return $this;
+        $this->levelDeepHelper = $levelDeepHelper;
     }
 
     /**
