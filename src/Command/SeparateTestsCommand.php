@@ -30,7 +30,7 @@ class SeparateTestsCommand extends Command
      * SeparateTestsCommand constructor.
      *
      * @param SeparateTestsHandler $separateTestsHandler
-     * @param string|null          $name
+     * @param string|null $name
      */
     public function __construct(SeparateTestsHandler $separateTestsHandler, string $name = null)
     {
@@ -51,7 +51,7 @@ class SeparateTestsCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      *
      * @return int
@@ -74,21 +74,23 @@ class SeparateTestsCommand extends Command
     }
 
     /**
-     * @param string $suitesFile
+     * @param string $allureReportsDir
      * @param string $baseTestDirPath
      * @param string $groupDirPath
-     * @param int    $countSuit
+     * @param int $countSuit
      */
-    private function separateTests(string $suitesFile, string $baseTestDirPath, string $groupDirPath, int $countSuit)
+    private function separateTests(string $allureReportsDir, string $baseTestDirPath, string $groupDirPath, int $countSuit)
     {
         $this->separateTestsHandler->setBaseTestDirPath($baseTestDirPath);
 
-        $testInfoArray    = $this->separateTestsHandler->reFormateSuitesFile($suitesFile);
-        $testDirsWithTime = $this->separateTestsHandler->summTimeByDirectories($testInfoArray);
-        $arGroups         = $this->separateTestsHandler->separateDirectoriesByTime($testDirsWithTime, $countSuit);
+        $testInfoCollection = $this->separateTestsHandler->buildTestInfoCollection($allureReportsDir);
+        $testDirsWithTime   = $this->separateTestsHandler->summTimeByDirectories($testInfoCollection);
+        $arGroups           = $this->separateTestsHandler->separateDirectoriesByTime($testDirsWithTime, $countSuit);
 
         // remove all group files
         $this->separateTestsHandler->removeAllGroupFiles($groupDirPath);
+
+        var_dump($arGroups);
 
         /** @var GroupBlockInfo $arGroupBlockInfo */
         foreach ($arGroups as $groupNumber => $arGroupBlockInfo) {

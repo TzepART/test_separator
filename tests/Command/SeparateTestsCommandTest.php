@@ -1,6 +1,6 @@
 <?php
 
-namespace TestSeparator\Tests\Command;
+namespace Tests\Command;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;

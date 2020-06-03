@@ -28,7 +28,7 @@ class SeparateTestsHandler
     private $baseTestDirPath;
 
     /**
-     * @param TestFilePathInterface      $fileSystemHelper
+     * @param TestFilePathInterface $fileSystemHelper
      * @param LevelDeepStrategyInterface $levelDeepHelper
      *
      */
@@ -38,33 +38,42 @@ class SeparateTestsHandler
         $this->levelDeepHelper  = $levelDeepHelper;
     }
 
-    /**
-     * @param string $suitesFile
-     *
-     * @return TestInfo[] | array
-     */
-    public function reFormateSuitesFile(string $suitesFile): array
+    public function buildTestInfoCollection(string $workDir): array
     {
-        $strings = file($suitesFile);
+        $filePaths = $this->getFilePaths($workDir);
+
         $results = [];
+        foreach ($filePaths as $filePath) {
+            echo $filePath . PHP_EOL;
+            $xml = simplexml_load_string(file_get_contents($filePath));
 
-        // remove head line
-        array_shift($strings);
-
-        foreach ($strings as $index => $string) {
-            $string   = str_replace('"', '', $string);
-            $strArray = explode(',', $string);
-            preg_match('/Support\.([a-z]+)\.([a-zA-Z]+)/', $strArray[1], $matches);
-            $dir       = $matches[1];
-            $test      = $matches[2];
-            $time      = (int) $strArray[2];
-            $file      = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
-            $results[] = new TestInfo($dir, $file, $test, $time);
+            preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);
+            $dir = $suitMatches[1];
+            foreach ($xml->{'test-cases'}->children() as $child) {
+                preg_match('/([^ ]+)/', (string) $child->name, $matches);
+                $test = $matches[1];
+                $time = (int) ($child->attributes()->stop - $child->attributes()->start);
+                $file = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
+                $results[] = new TestInfo($dir, $file, $test, $time);
+            }
         }
 
         return $results;
     }
 
+    private function getFilePaths(string $workDir): array
+    {
+        $files     = scandir($workDir);
+        $filePaths = [];
+        foreach ($files as $file) {
+            $filePath = $workDir . $file;
+            if (is_file($filePath)) {
+                $filePaths[] = $filePath;
+            }
+        }
+
+        return $filePaths;
+    }
 
     /**
      * @param TestInfo[] $testInfoItems
@@ -95,7 +104,7 @@ class SeparateTestsHandler
 
     /**
      * @param array $timeResults
-     * @param int   $countSuit
+     * @param int $countSuit
      *
      * @return array
      */

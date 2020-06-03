@@ -1,22 +1,13 @@
 #!/usr/bin/env php
 <?php
+declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\SeparateTestsHandler;
 use \TestSeparator\Handler\ServicesSeparateTestsFactory;
 
-$autoloadPaths = [
-    __DIR__ . '/../../autoload.php',
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/vendor/autoload.php',
-];
-
-foreach ($autoloadPaths as $path) {
-    if (file_exists($path)) {
-        require_once $path;
-    }
-}
+require __DIR__ . '/vendor/autoload.php';
 
 $application = new Application();
 
@@ -28,4 +19,8 @@ $separateHelper = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
 
 $application->add(new SeparateTestsCommand($separateHelper, 'separate'));
 
-$application->run();
+try {
+    $application->run();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}

@@ -18,11 +18,10 @@ class FilePathByFileSystemHelper implements TestFilePathInterface
     public function getFilePathByTestName(string $testName, string $parentDir): string
     {
         $patternCommand = 'grep -R "%s" -l ' . $this->getBaseTestDirPath() . '%s | head -1';
-        $file           = trim(shell_exec(sprintf($patternCommand, $testName, $parentDir)));
+        $file           = shell_exec(sprintf($patternCommand, $testName, $parentDir)) ?? '';
 
-        return $file;
+        return trim($file);
     }
-
 
 
 }
