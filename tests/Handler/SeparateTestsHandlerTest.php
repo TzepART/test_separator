@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace TestSeparator\Tests\Handler;
+namespace Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
-use TestSeparator\Handler\FileSystemHelper;
+use \TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
@@ -21,35 +21,34 @@ class SeparateTestsHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $fileSystemHelper = $this->createMock(FileSystemHelper::class);
+        $fileSystemHelper = $this->createMock(FilePathByFileSystemHelper::class);
         $mockResults      = json_decode(file_get_contents(__DIR__ . '/../fixtures/file-system-mock.json'), true);
 
-        /** @var FileSystemHelper $fileSystemHelper */
-        $fileSystemHelper->method('getTestFilePath')
-            ->will(
-                $this->returnCallback(
-                    function ($baseTestDirPath, $test, $dir) use ($mockResults) {
-                        return $mockResults[$baseTestDirPath . '+' . $test . '+' . $dir];
-                    }
-                )
+        /** @var FilePathByFileSystemHelper $fileSystemHelper */
+        $fileSystemHelper->method('getFilePathByTestName')
+            ->willReturnCallback(
+                function ($test, $dir) use ($mockResults) {
+                    return $mockResults['/path/to/project/tests/+' . $test . '+' . $dir];
+                }
             );
+        $fileSystemHelper->method('setBaseTestDirPath');
+
         /** @var DirectoryDeepStrategyService $levelDeepHelper */
         $levelDeepHelper = $this->createMock(DirectoryDeepStrategyService::class);
 
         $this->handler = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
+        $this->handler->setBaseTestDirPath('/path/to/project/tests/');
     }
 
     /**
-     * @dataProvider reFormateSuitesFileData()
+     * @dataProvider buildTestInfoCollectionData()
      *
-     * @param string $suitesFile
+     * @param string $reportsDir
      * @param string $expectedResultFile
-     * @param string $baseTestDirPath
      */
-    public function testReFormateSuitesFile(string $suitesFile, string $expectedResultFile, string $baseTestDirPath)
+    public function testBuildTestInfoCollection(string $reportsDir, string $expectedResultFile)
     {
-
-        $resultArray = $this->handler->reFormateSuitesFile($suitesFile, $baseTestDirPath);
+        $resultArray = $this->handler->buildTestInfoCollection($reportsDir);
 
         $this->assertEquals(
             array_map(
@@ -67,13 +66,12 @@ class SeparateTestsHandlerTest extends TestCase
         );
     }
 
-    public function reFormateSuitesFileData()
+    public function buildTestInfoCollectionData()
     {
         return [
             [
-                __DIR__ . '/../fixtures/suites.csv',
+                __DIR__ . '/../fixtures/allure_results/',
                 __DIR__ . '/../fixtures/results/result.csv',
-                '/path/to/project/tests/',
             ],
         ];
     }
@@ -83,9 +81,8 @@ class SeparateTestsHandlerTest extends TestCase
      *
      * @param string $inputResultFile
      * @param string $expectedTimeResultsFile
-     * @param string $baseTestDirPath
      */
-    public function testSummTimeByDirectories(string $inputResultFile, string $expectedTimeResultsFile, string $baseTestDirPath)
+    public function testSummTimeByDirectories(string $inputResultFile, string $expectedTimeResultsFile)
     {
         $testInfoItems    = array_map(
             function (string $string) {
@@ -95,7 +92,7 @@ class SeparateTestsHandlerTest extends TestCase
             },
             file($inputResultFile)
         );
-        $testDirsWithTime = $this->handler->summTimeByDirectories($testInfoItems, $baseTestDirPath);
+        $testDirsWithTime = $this->handler->summTimeByDirectories($testInfoItems);
         $this->assertEquals($testDirsWithTime, json_decode(file_get_contents($expectedTimeResultsFile), true));
     }
 
@@ -105,7 +102,6 @@ class SeparateTestsHandlerTest extends TestCase
             [
                 __DIR__ . '/../fixtures/results/result.csv',
                 __DIR__ . '/../fixtures/results/time_results.json',
-                '/path/to/project/tests/',
             ],
         ];
     }
@@ -115,7 +111,7 @@ class SeparateTestsHandlerTest extends TestCase
      *
      * @param string $timeResultsFile
      * @param string $expectedGroupSeparatingFile
-     * @param int    $countSuit
+     * @param int $countSuit
      */
     public function testSeparateDirectoriesByTime(string $timeResultsFile, string $expectedGroupSeparatingFile, int $countSuit)
     {

@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
 
-
 namespace TestSeparator\Handler;
 
-
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
+use TestSeparator\Strategy\FileDeepStrategyService;
+use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
+use TestSeparator\Strategy\FilePath\TestFilePathInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
+use TestSeparator\Strategy\TestDeepStrategyService;
 
 class ServicesSeparateTestsFactory
 {
@@ -22,10 +24,10 @@ class ServicesSeparateTestsFactory
                 $service = new DirectoryDeepStrategyService();
                 break;
             case self::FILE_LEVEL:
-                $service = new FileSystemHelper();
+                $service = new FileDeepStrategyService();
                 break;
             case self::TEST_LEVEL:
-                $service = new FileSystemHelper();
+                $service = new TestDeepStrategyService();
                 break;
             default:
                 $service = new DirectoryDeepStrategyService();
@@ -35,8 +37,8 @@ class ServicesSeparateTestsFactory
         return $service;
     }
 
-    public static function makeFileSystemHelper(): FileSystemHelper
+    public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
     {
-        return new FileSystemHelper();
+        return new FilePathByFileSystemHelper();
     }
 }

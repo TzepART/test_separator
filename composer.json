@@ -1,18 +1,20 @@
 {
-    "name": "tzepart/test_separator",
+    "name": "tzepart/test-separator",
     "license": "proprietary",
     "type": "project",
     "description": "Project for separating",
     "autoload": {
         "psr-4": {
-            "TestSeparator\\": ["src/"]
+            "TestSeparator\\": "src/",
+            "Tests\\" : "tests"
         }
     },
     "require": {
         "php": ">=7.1",
         "drupol/phpartition": "^0.1.2",
         "symfony/console": "^4.4",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-simplexml": "*"
     },
     "bin": [
         "separate-tests"
