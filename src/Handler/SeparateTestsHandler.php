@@ -8,6 +8,7 @@ use TestSeparator\Configuration;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
 use TestSeparator\Strategy\FilePath\TestFilePathInterface;
+use TestSeparator\Strategy\LevelDeepStrategyInterface;
 
 class SeparateTestsHandler
 {
@@ -27,6 +28,11 @@ class SeparateTestsHandler
     private $configuration;
 
     /**
+     * @var LevelDeepStrategyInterface
+     */
+    private $timeCounterStrategy;
+
+    /**
      * @param TestFilePathInterface $fileSystemHelper
      * @param Configuration $configuration
      *
@@ -36,15 +42,17 @@ class SeparateTestsHandler
         $this->fileSystemHelper = $fileSystemHelper;
         $this->configuration    = $configuration;
         $this->setBaseTestDirPath($configuration->getTestsDirectory());
+        $this->timeCounterStrategy = ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel());
     }
 
     public function buildTestInfoCollection(): array
     {
-        $filePaths = $this->getFilePaths($this->configuration->getAllureReportsDirectory());
+        $filePaths = $this->fileSystemHelper->getFilePathsByDirectory($this->configuration->getAllureReportsDirectory());
 
         $results = [];
         foreach ($filePaths as $filePath) {
             echo $filePath . PHP_EOL;
+            //TODO add catching if xml is Invalid
             $xml = simplexml_load_string(file_get_contents($filePath));
 
             preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);
@@ -64,64 +72,10 @@ class SeparateTestsHandler
         return $results;
     }
 
-    private function getFilePaths(string $workDir): array
+    public function groupTimeEntityWithCountedTime($testInfoItems): array
     {
-        $files     = scandir($workDir);
-        $filePaths = [];
-        foreach ($files as $file) {
-            $filePath = $workDir . $file;
-            if (is_file($filePath)) {
-                $filePaths[] = $filePath;
-            }
-        }
-
-        return $filePaths;
+        return $this->timeCounterStrategy->groupTimeEntityWithCountedTime($testInfoItems);
     }
-
-    /**
-     * @param TestInfo[] $testInfoItems
-     *
-     * @return array
-     */
-    public function summTimeByDirectories(array $testInfoItems): array
-    {
-        $timeResults = [];
-        foreach ($testInfoItems as $testInfoItem) {
-            $rootDir = $testInfoItem->getDir();
-            preg_match('/([A-Za-z]+)\//', trim(str_replace($this->getBaseTestDirPath() . $rootDir . '/', '', $testInfoItem->getFile())), $matches);
-            $dir    = $matches[1];
-            $keyDir = $rootDir . '/' . $dir . '/' . $testInfoItem->getFile();
-            $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);
-            if (isset($timeResults[$keyDir])) {
-                $timeResults[$keyDir] = round($timeResults[$keyDir] + $time, 2);
-            } else {
-                $timeResults[$keyDir] = $time;
-            }
-        }
-
-        return $timeResults;
-    }
-
-    /**
-     * @param TestInfo[] $testInfoItems
-     *
-     * @return array
-     */
-    public function summTimeByFiles(array $testInfoItems): array
-    {
-        $timeResults = [];
-        foreach ($testInfoItems as $testInfoItem) {
-            $time = round(($testInfoItem->getTime()) / 1000, 2);
-            if (isset($timeResults[$testInfoItem->getRelativePath()])) {
-                $timeResults[$testInfoItem->getRelativePath()] = round($timeResults[$testInfoItem->getRelativePath()] + $time, 2);
-            } else {
-                $timeResults[$testInfoItem->getRelativePath()] = $time;
-            }
-        }
-
-        return $timeResults;
-    }
-
 
     /**
      * @param array $timeResults
@@ -140,7 +94,7 @@ class SeparateTestsHandler
         foreach ($result as $key => $block) {
             $groupBlockInfo = new GroupBlockInfo();
             foreach ($block as $time) {
-                $keyDir = array_search($time, $timeResults);
+                $keyDir = array_search($time, $timeResults, true);
                 $groupBlockInfo->addDirTime($keyDir, $time);
             }
             $groupBlockInfo->setSummTime(array_sum($block));
@@ -168,9 +122,7 @@ class SeparateTestsHandler
 
     /**
      * TODO change on setting by config
-     *
      * @param string $baseTestDirPath
-     *
      * @return $this
      */
     public function setBaseTestDirPath(string $baseTestDirPath): self

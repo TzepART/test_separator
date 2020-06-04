@@ -9,6 +9,16 @@ cp config.json.dist config.json
 
 Add your configuration to config.json
 
+###Pay attention
+Field `level` can be one of these values:
+* directory
+* class
+* method
+
+Field `tests-directory` - path to directory where is yours tests
+
+Field `result-path`- path to directory where final groups files will be
+
 ## Manual running
 ```
 ./vendor/bin/separate-tests separate 6

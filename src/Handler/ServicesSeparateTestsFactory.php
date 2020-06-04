@@ -5,36 +5,33 @@ namespace TestSeparator\Handler;
 
 use TestSeparator\Configuration;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
-use TestSeparator\Strategy\FileDeepStrategyService;
+use TestSeparator\Strategy\ClassDeepStrategyService;
 use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
 use TestSeparator\Strategy\FilePath\TestFilePathInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
-use TestSeparator\Strategy\TestDeepStrategyService;
+use TestSeparator\Strategy\MethodDeepStrategyService;
 
 class ServicesSeparateTestsFactory
 {
-    public const DIRECTORY_LEVEL = 'directory_level';
-    public const FILE_LEVEL      = 'file_level';
-    public const TEST_LEVEL      = 'test_level';
+    public const DIRECTORY_LEVEL = 'directory';
+    public const CLASS_LEVEL     = 'class';
+    public const METHOD_LEVEL    = 'method';
 
     public static function makeLevelDeepService(string $serviceName): LevelDeepStrategyInterface
     {
-        switch ($serviceName) {
-            case self::DIRECTORY_LEVEL:
-                $service = new DirectoryDeepStrategyService();
-                break;
-            case self::FILE_LEVEL:
-                $service = new FileDeepStrategyService();
-                break;
-            case self::TEST_LEVEL:
-                $service = new TestDeepStrategyService();
-                break;
-            default:
-                $service = new DirectoryDeepStrategyService();
-                break;
+        if($serviceName === self::DIRECTORY_LEVEL){
+            return new DirectoryDeepStrategyService();
         }
 
-        return $service;
+        if($serviceName === self::CLASS_LEVEL){
+            return new ClassDeepStrategyService();
+        }
+
+        if($serviceName === self::METHOD_LEVEL){
+            return new MethodDeepStrategyService();
+        }
+
+        throw new \RuntimeException('DepthLevel is undefined');
     }
 
     public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
