@@ -12,10 +12,10 @@ require __DIR__ . '/vendor/autoload.php';
 $application = new Application();
 
 // TODO make builder
+$configuration = ServicesSeparateTestsFactory::makeConfiguration(__DIR__.'/config.json');
 $fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper();
-$levelDeepHelper  = ServicesSeparateTestsFactory::makeLevelDeepService(ServicesSeparateTestsFactory::DIRECTORY_LEVEL);
 
-$separateHelper = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
+$separateHelper = new SeparateTestsHandler($fileSystemHelper, $configuration);
 
 $application->add(new SeparateTestsCommand($separateHelper, 'separate'));
 

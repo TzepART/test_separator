@@ -28,19 +28,26 @@ class TestInfo
     private $time;
 
     /**
+     * @var string
+     */
+    private $relativePath;
+
+    /**
      * TestInfo constructor.
      *
      * @param string $dir
      * @param string $file
+     * @param string $relativePath
      * @param string $test
-     * @param int    $time
+     * @param int $time
      */
-    public function __construct(string $dir, string $file, string $test, int $time)
+    public function __construct(string $dir, string $file, string $relativePath, string $test, int $time)
     {
-        $this->dir  = $dir;
-        $this->file = $file;
-        $this->test = $test;
-        $this->time = $time;
+        $this->dir          = $dir;
+        $this->file         = $file;
+        $this->relativePath = $relativePath;
+        $this->test         = $test;
+        $this->time         = $time;
     }
 
     /**
@@ -75,11 +82,20 @@ class TestInfo
         return $this->time;
     }
 
+    /**
+     * @return string
+     */
+    public function getRelativePath(): string
+    {
+        return $this->relativePath;
+    }
+
     public function asArray()
     {
         return [
             $this->dir,
             $this->file,
+            $this->relativePath,
             $this->test,
             $this->time,
         ];

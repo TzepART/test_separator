@@ -4,11 +4,10 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
+use TestSeparator\Configuration;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\TestInfo;
 use TestSeparator\Strategy\FilePath\TestFilePathInterface;
-use TestSeparator\Strategy\LevelDeepStrategyInterface;
-
 
 class SeparateTestsHandler
 {
@@ -18,29 +17,30 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @var LevelDeepStrategyInterface
-     */
-    private $levelDeepHelper;
-
-    /**
      * @var string
      */
     private $baseTestDirPath;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * @param TestFilePathInterface $fileSystemHelper
-     * @param LevelDeepStrategyInterface $levelDeepHelper
+     * @param Configuration $configuration
      *
      */
-    public function __construct(TestFilePathInterface $fileSystemHelper, LevelDeepStrategyInterface $levelDeepHelper)
+    public function __construct(TestFilePathInterface $fileSystemHelper, Configuration $configuration)
     {
         $this->fileSystemHelper = $fileSystemHelper;
-        $this->levelDeepHelper  = $levelDeepHelper;
+        $this->configuration    = $configuration;
+        $this->setBaseTestDirPath($configuration->getTestsDirectory());
     }
 
-    public function buildTestInfoCollection(string $workDir): array
+    public function buildTestInfoCollection(): array
     {
-        $filePaths = $this->getFilePaths($workDir);
+        $filePaths = $this->getFilePaths($this->configuration->getAllureReportsDirectory());
 
         $results = [];
         foreach ($filePaths as $filePath) {
@@ -54,7 +54,10 @@ class SeparateTestsHandler
                 $test = $matches[1];
                 $time = (int) ($child->attributes()->stop - $child->attributes()->start);
                 $file = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
-                $results[] = new TestInfo($dir, $file, $test, $time);
+                if ($file !== '') {
+                    $relativePath = str_replace($this->configuration->getTestsDirectory(), 'tests/', $file);
+                    $results[]    = new TestInfo($dir, $file, $relativePath, $test, $time);
+                }
             }
         }
 
@@ -83,19 +86,37 @@ class SeparateTestsHandler
     public function summTimeByDirectories(array $testInfoItems): array
     {
         $timeResults = [];
-        $summ        = 0;
         foreach ($testInfoItems as $testInfoItem) {
             $rootDir = $testInfoItem->getDir();
             preg_match('/([A-Za-z]+)\//', trim(str_replace($this->getBaseTestDirPath() . $rootDir . '/', '', $testInfoItem->getFile())), $matches);
             $dir    = $matches[1];
-            $keyDir = $rootDir . '/' . $dir;
+            $keyDir = $rootDir . '/' . $dir . '/' . $testInfoItem->getFile();
             $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);
             if (isset($timeResults[$keyDir])) {
                 $timeResults[$keyDir] = round($timeResults[$keyDir] + $time, 2);
             } else {
                 $timeResults[$keyDir] = $time;
             }
-            $summ += $time;
+        }
+
+        return $timeResults;
+    }
+
+    /**
+     * @param TestInfo[] $testInfoItems
+     *
+     * @return array
+     */
+    public function summTimeByFiles(array $testInfoItems): array
+    {
+        $timeResults = [];
+        foreach ($testInfoItems as $testInfoItem) {
+            $time = round(($testInfoItem->getTime()) / 1000, 2);
+            if (isset($timeResults[$testInfoItem->getRelativePath()])) {
+                $timeResults[$testInfoItem->getRelativePath()] = round($timeResults[$testInfoItem->getRelativePath()] + $time, 2);
+            } else {
+                $timeResults[$testInfoItem->getRelativePath()] = $time;
+            }
         }
 
         return $timeResults;
@@ -129,23 +150,17 @@ class SeparateTestsHandler
         return $groupBlockInfoItems;
     }
 
-    /**
-     * @param string $groupDirPath
-     */
-    public function removeAllGroupFiles(string $groupDirPath): void
+    public function removeAllGroupFiles(): void
     {
-        $files = scandir($groupDirPath); // get all file names
+        $files = scandir($this->configuration->getResultPath()); // get all file names
         foreach ($files as $file) { // iterate files
-            $filePath = $groupDirPath . $file;
+            $filePath = $this->configuration->getResultPath() . $file;
             if (is_file($filePath)) {
                 unlink($filePath); // delete file
             }
         }
     }
 
-    /**
-     * @return string
-     */
     public function getBaseTestDirPath(): string
     {
         return $this->baseTestDirPath;
@@ -158,11 +173,16 @@ class SeparateTestsHandler
      *
      * @return $this
      */
-    public function setBaseTestDirPath(string $baseTestDirPath)
+    public function setBaseTestDirPath(string $baseTestDirPath): self
     {
         $this->baseTestDirPath = $baseTestDirPath;
         $this->fileSystemHelper->setBaseTestDirPath($baseTestDirPath);
 
         return $this;
+    }
+
+    public function getGroupDirectoryPath(): string
+    {
+        return $this->configuration->getResultPath();
     }
 }

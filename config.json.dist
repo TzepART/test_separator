@@ -1,0 +1,8 @@
+{
+  "strategy": "default",
+  "allure-reports-directory": "/path/to/file/with/allure/reports/directory/",
+  "codeception-file": "/path/to/file/with/codeception/test/report.xml",
+  "tests-directory": "/path/to/project/tests/",
+  "result-path": "/path/to/project/file/groups/",
+  "level": "class"
+}

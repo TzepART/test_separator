@@ -43,9 +43,6 @@ class SeparateTestsCommand extends Command
     {
         $this
             ->setDescription('Separate Tests on several time groups.')
-            ->addArgument('allure_file', InputArgument::REQUIRED, 'The file with preview tests results.')
-            ->addArgument('tests_directory', InputArgument::REQUIRED, 'The directory with tests.')
-            ->addArgument('result_path', InputArgument::REQUIRED, 'The directory where results will.')
             ->addArgument('count_group', InputArgument::REQUIRED, 'The count of time groups.')
             ->setHelp('This command allows you to separate tests...');
     }
@@ -61,12 +58,9 @@ class SeparateTestsCommand extends Command
         // outputs multiple lines to the console (adding "\n" at the end of each line)
         $output->writeln('Separating started...');
 
-        $suitesFile      = $input->getArgument('allure_file');
-        $baseTestDirPath = $input->getArgument('tests_directory');
-        $groupDirPath    = $input->getArgument('result_path');
         $countSuit       = (int) $input->getArgument('count_group');
 
-        $this->separateTests($suitesFile, $baseTestDirPath, $groupDirPath, $countSuit);
+        $this->separateTests($countSuit);
 
         $output->writeln('Your test are separated!');
 
@@ -74,30 +68,23 @@ class SeparateTestsCommand extends Command
     }
 
     /**
-     * @param string $allureReportsDir
-     * @param string $baseTestDirPath
-     * @param string $groupDirPath
      * @param int $countSuit
      */
-    private function separateTests(string $allureReportsDir, string $baseTestDirPath, string $groupDirPath, int $countSuit)
+    private function separateTests(int $countSuit): void
     {
-        $this->separateTestsHandler->setBaseTestDirPath($baseTestDirPath);
-
-        $testInfoCollection = $this->separateTestsHandler->buildTestInfoCollection($allureReportsDir);
-        $testDirsWithTime   = $this->separateTestsHandler->summTimeByDirectories($testInfoCollection);
+        $testInfoCollection = $this->separateTestsHandler->buildTestInfoCollection();
+        $testDirsWithTime   = $this->separateTestsHandler->summTimeByFiles($testInfoCollection);
         $arGroups           = $this->separateTestsHandler->separateDirectoriesByTime($testDirsWithTime, $countSuit);
 
         // remove all group files
-        $this->separateTestsHandler->removeAllGroupFiles($groupDirPath);
-
-        var_dump($arGroups);
+        $this->separateTestsHandler->removeAllGroupFiles();
 
         /** @var GroupBlockInfo $arGroupBlockInfo */
         foreach ($arGroups as $groupNumber => $arGroupBlockInfo) {
             $groupName = $this->groupPrefix . $groupNumber;
 
             foreach ($arGroupBlockInfo->getDirTimes() as $localTestsDir => $time) {
-                file_put_contents($groupDirPath . $groupName . '.txt', 'tests/' . $localTestsDir . PHP_EOL, FILE_APPEND);
+                file_put_contents($this->separateTestsHandler->getGroupDirectoryPath() . $groupName . '.txt', $localTestsDir . PHP_EOL, FILE_APPEND);
             }
         }
     }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestSeparator\Handler;
 
+use TestSeparator\Configuration;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
 use TestSeparator\Strategy\FileDeepStrategyService;
 use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
@@ -12,7 +13,6 @@ use TestSeparator\Strategy\TestDeepStrategyService;
 
 class ServicesSeparateTestsFactory
 {
-
     public const DIRECTORY_LEVEL = 'directory_level';
     public const FILE_LEVEL      = 'file_level';
     public const TEST_LEVEL      = 'test_level';
@@ -40,5 +40,10 @@ class ServicesSeparateTestsFactory
     public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
     {
         return new FilePathByFileSystemHelper();
+    }
+
+    public static function makeConfiguration(string $configPath): Configuration
+    {
+        return new Configuration($configPath);
     }
 }
