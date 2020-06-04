@@ -4,11 +4,14 @@
 
 ```
 composer require tzepart/test-separator
+cp config.json.dist config.json
 ```
+
+Add your configuration to config.json
 
 ## Manual running
 ```
-./vendor/bin/separate-tests separate /path/to/file/with/allure/reports/directory/ /path/to/project/tests/ /path/to/project/file/groups/ 6
+./vendor/bin/separate-tests separate 6
 ```
 
 Where "6" - groups count
