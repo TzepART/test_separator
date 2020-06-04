@@ -12,15 +12,15 @@ require __DIR__ . '/vendor/autoload.php';
 $application = new Application();
 
 // TODO make builder
-$fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper();
-$levelDeepHelper  = ServicesSeparateTestsFactory::makeLevelDeepService(ServicesSeparateTestsFactory::DIRECTORY_LEVEL);
-
-$separateHelper = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
-
-$application->add(new SeparateTestsCommand($separateHelper, 'separate'));
-
 try {
+    $configuration    = ServicesSeparateTestsFactory::makeConfiguration(__DIR__ . '/config.json');
+    $fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper();
+
+    $separateHelper = new SeparateTestsHandler($fileSystemHelper, $configuration);
+
+    $application->add(new SeparateTestsCommand($separateHelper, 'separate'));
+
     $application->run();
 } catch (Exception $e) {
-    echo $e->getMessage();
+    echo $e->getMessage().PHP_EOL;
 }
