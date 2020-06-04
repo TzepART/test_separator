@@ -1,6 +1,6 @@
 # Test Group Separator
 
-# Installation
+## Installation
 
 ```
 composer require tzepart/test-separator
@@ -9,7 +9,7 @@ cp config.json.dist config.json
 
 Add your configuration to config.json
 
-###Pay attention
+### Pay attention
 Field `level` can be one of these values:
 * directory
 * class
