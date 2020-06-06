@@ -21,6 +21,7 @@
         "separate-tests"
     ],
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^7.5"
     }
 }
