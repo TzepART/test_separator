@@ -6,7 +6,6 @@ namespace TestSeparator\Handler;
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Configuration;
 use TestSeparator\Model\GroupBlockInfo;
-use TestSeparator\Model\TestInfo;
 use TestSeparator\Strategy\FilePath\TestFilePathInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
 
@@ -16,11 +15,6 @@ class SeparateTestsHandler
      * @var TestFilePathInterface
      */
     private $fileSystemHelper;
-
-    /**
-     * @var string
-     */
-    private $baseTestDirPath;
 
     /**
      * @var Configuration
@@ -47,29 +41,7 @@ class SeparateTestsHandler
 
     public function buildTestInfoCollection(): array
     {
-        $filePaths = $this->fileSystemHelper->getFilePathsByDirectory($this->configuration->getAllureReportsDirectory());
-
-        $results = [];
-        foreach ($filePaths as $filePath) {
-            echo $filePath . PHP_EOL;
-            //TODO add catching if xml is Invalid
-            $xml = simplexml_load_string(file_get_contents($filePath));
-
-            preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);
-            $dir = $suitMatches[1];
-            foreach ($xml->{'test-cases'}->children() as $child) {
-                preg_match('/([^ ]+)/', (string) $child->name, $matches);
-                $test = $matches[1];
-                $time = (int) ($child->attributes()->stop - $child->attributes()->start);
-                $file = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
-                if ($file !== '') {
-                    $relativePath = str_replace($this->configuration->getTestsDirectory(), 'tests/', $file);
-                    $results[]    = new TestInfo($dir, $file, $relativePath, $test, $time);
-                }
-            }
-        }
-
-        return $results;
+        return $this->fileSystemHelper->buildTestInfoCollection();
     }
 
     public function groupTimeEntityWithCountedTime($testInfoItems): array
@@ -104,6 +76,7 @@ class SeparateTestsHandler
         return $groupBlockInfoItems;
     }
 
+    // TODO move to file_helper
     public function removeAllGroupFiles(): void
     {
         $files = scandir($this->configuration->getResultPath()); // get all file names
@@ -115,11 +88,6 @@ class SeparateTestsHandler
         }
     }
 
-    public function getBaseTestDirPath(): string
-    {
-        return $this->baseTestDirPath;
-    }
-
     /**
      * TODO change on setting by config
      * @param string $baseTestDirPath
@@ -127,7 +95,6 @@ class SeparateTestsHandler
      */
     public function setBaseTestDirPath(string $baseTestDirPath): self
     {
-        $this->baseTestDirPath = $baseTestDirPath;
         $this->fileSystemHelper->setBaseTestDirPath($baseTestDirPath);
 
         return $this;

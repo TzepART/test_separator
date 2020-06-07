@@ -34,9 +34,10 @@ class ServicesSeparateTestsFactory
         throw new \RuntimeException('DepthLevel is undefined');
     }
 
-    public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
+    public static function makeTestFilePathHelper(Configuration $configuration): TestFilePathInterface
     {
-        return new FilePathByFileSystemHelper();
+        // TODO FilePathByFileSystemHelper have to be used, when we couldn't find report.xml
+        return new FilePathByFileSystemHelper($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
     }
 
     public static function makeConfiguration(string $configPath): Configuration

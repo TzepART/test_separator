@@ -11,22 +11,9 @@ class FilePathByClassMapSystem implements TestFilePathInterface
 
     private $testClassesMap = [];
 
-    public function getFilePathByTestName(string $testName, string $parentDir): string
+    public function buildTestInfoCollection(): array
     {
-        // TODO: Implement getFilePathByTestName() method.
-    }
-
-    /**
-     * @param string $baseTestDirPath
-     *
-     * @return $this
-     */
-    public function setBaseTestDirPath(string $baseTestDirPath)
-    {
-        $this->baseTestDirPath = $baseTestDirPath;
-        $this->setTestClassesMap();
-
-        return $this;
+        return [];
     }
 
     /**

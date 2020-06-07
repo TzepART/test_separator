@@ -25,13 +25,14 @@ trait BaseTestDirPathTrait
      *
      * @return $this
      */
-    public function setBaseTestDirPath(string $baseTestDirPath)
+    public function setBaseTestDirPath(string $baseTestDirPath): self
     {
         $this->baseTestDirPath = $baseTestDirPath;
 
         return $this;
     }
 
+    // TODO move to Abstract parent class or another trait
     public function getFilePathsByDirectory(string $workDir): array
     {
         $files     = scandir($workDir);
