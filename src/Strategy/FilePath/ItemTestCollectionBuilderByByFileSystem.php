@@ -1,16 +1,12 @@
 <?php
 declare(strict_types=1);
 
-
 namespace TestSeparator\Strategy\FilePath;
 
+use TestSeparator\Model\ItemTestInfo;
 
-use TestSeparator\Model\TestInfo;
-
-class FilePathByFileSystemHelper implements TestFilePathInterface
+class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollectionBuilder
 {
-    use BaseTestDirPathTrait;
-
     /**
      * @var string
      */
@@ -22,7 +18,7 @@ class FilePathByFileSystemHelper implements TestFilePathInterface
     private $testsDirectory;
 
     /**
-     * FilePathByFileSystemHelper constructor.
+     * ItemTestCollectionBuilderByByFileSystem constructor.
      *
      * @param string $allureReportsDirectory
      * @param string $testsDirectory
@@ -33,7 +29,9 @@ class FilePathByFileSystemHelper implements TestFilePathInterface
         $this->testsDirectory         = $testsDirectory;
     }
 
-    // TODO there will be behavior, when we couldn't find report.xml
+    /**
+     * @return ItemTestInfo[]|array
+     */
     public function buildTestInfoCollection(): array
     {
         $filePaths = $this->getFilePathsByDirectory($this->allureReportsDirectory);
@@ -53,7 +51,7 @@ class FilePathByFileSystemHelper implements TestFilePathInterface
                 $file = $this->getFilePathByTestName($test, $dir);
                 if ($file !== '') {
                     $relativePath = str_replace($this->testsDirectory, 'tests/', $file);
-                    $results[]    = new TestInfo($dir, $file, $relativePath, $test, $time);
+                    $results[]    = new ItemTestInfo($dir, $file, $relativePath, $test, $time);
                 }
             }
         }

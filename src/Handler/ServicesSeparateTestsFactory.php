@@ -6,8 +6,8 @@ namespace TestSeparator\Handler;
 use TestSeparator\Configuration;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
 use TestSeparator\Strategy\ClassDeepStrategyService;
-use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
-use TestSeparator\Strategy\FilePath\TestFilePathInterface;
+use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByFileSystem;
+use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
 use TestSeparator\Strategy\MethodDeepStrategyService;
 
@@ -34,10 +34,10 @@ class ServicesSeparateTestsFactory
         throw new \RuntimeException('DepthLevel is undefined');
     }
 
-    public static function makeTestFilePathHelper(Configuration $configuration): TestFilePathInterface
+    public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        // TODO FilePathByFileSystemHelper have to be used, when we couldn't find report.xml
-        return new FilePathByFileSystemHelper($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
+        // TODO ItemTestCollectionBuilderByByFileSystem have to be used, when we couldn't find report.xml
+        return new ItemTestCollectionBuilderByByFileSystem($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
     }
 
     public static function makeConfiguration(string $configPath): Configuration

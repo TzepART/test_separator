@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TestSeparator\Model;
 
 
-class TestInfo
+class ItemTestInfo
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class TestInfo
     private $relativePath;
 
     /**
-     * TestInfo constructor.
+     * ItemTestInfo constructor.
      *
      * @param string $dir
      * @param string $file

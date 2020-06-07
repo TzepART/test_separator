@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace TestSeparator\Strategy;
 
-use TestSeparator\Model\TestInfo;
+use TestSeparator\Model\ItemTestInfo;
 
 interface LevelDeepStrategyInterface
 {
     /**
-     * @param array|TestInfo[] $testInfoItems
+     * @param array|ItemTestInfo[] $testInfoItems
      *
      * @return array
      */

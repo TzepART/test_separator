@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestSeparator\Strategy;
 
-use TestSeparator\Model\TestInfo;
+use TestSeparator\Model\ItemTestInfo;
 
 class DirectoryDeepStrategyService implements LevelDeepStrategyInterface
 {
@@ -11,7 +11,7 @@ class DirectoryDeepStrategyService implements LevelDeepStrategyInterface
     {
         $timeResults = [];
 
-        /** @var TestInfo $testInfoItem */
+        /** @var ItemTestInfo $testInfoItem */
         foreach ($testInfoItems as $testInfoItem) {
             $keyDir = preg_replace('/[A-z0-9]+\.php$/', '', $testInfoItem->getRelativePath());
             $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);

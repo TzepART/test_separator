@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace TestSeparator\Strategy\FilePath;
 
 
-class FilePathByClassMapSystem implements TestFilePathInterface
+class ItemTestCollectionBuilderByClassMapSystem extends AbstractItemTestCollectionBuilder
 {
-    use BaseTestDirPathTrait;
-
     private $testClassesMap = [];
 
     public function buildTestInfoCollection(): array
