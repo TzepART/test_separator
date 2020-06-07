@@ -18,7 +18,7 @@ class Configuration
     /**
      * @var string
      */
-    private $codeceptionFile;
+    private $codeceptionReportDir;
 
     /**
      * @var string
@@ -39,16 +39,17 @@ class Configuration
      * Configuration constructor.
      *
      * @param string $configPath
+     * TODO add validation of each params
      */
     public function __construct(string $configPath)
     {
-        $config = json_decode(file_get_contents($configPath), true);
-        $this->strategy = $config['strategy'];
+        $config                       = json_decode(file_get_contents($configPath), true);
+        $this->strategy               = $config['strategy'];
         $this->allureReportsDirectory = $config['allure-reports-directory'];
-        $this->codeceptionFile = $config['codeception-file'];
-        $this->testsDirectory = $config['tests-directory'];
-        $this->resultPath = $config['result-path'];
-        $this->depthLevel = $config['level'];
+        $this->codeceptionReportDir   = $config['codeception-report-directory'];
+        $this->testsDirectory         = $config['tests-directory'];
+        $this->resultPath             = $config['result-path'];
+        $this->depthLevel             = $config['level'];
     }
 
 
@@ -71,17 +72,17 @@ class Configuration
     /**
      * @return string
      */
-    public function getCodeceptionFile(): string
+    public function getTestsDirectory(): string
     {
-        return $this->codeceptionFile;
+        return $this->testsDirectory;
     }
 
     /**
      * @return string
      */
-    public function getTestsDirectory(): string
+    public function getCodeceptionReportDir(): string
     {
-        return $this->testsDirectory;
+        return $this->codeceptionReportDir;
     }
 
     /**

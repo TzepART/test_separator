@@ -37,7 +37,11 @@ class ServicesSeparateTestsFactory
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
         // TODO ItemTestCollectionBuilderByByFileSystem have to be used, when we couldn't find report.xml
-        return new ItemTestCollectionBuilderByByFileSystem($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
+        if(is_dir($configuration->getCodeceptionReportDir())){
+            //
+        }else{
+            return new ItemTestCollectionBuilderByByFileSystem($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
+        }
     }
 
     public static function makeConfiguration(string $configPath): Configuration

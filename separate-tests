@@ -14,7 +14,7 @@ $application = new Application();
 // TODO make builder
 try {
     $configuration    = ServicesSeparateTestsFactory::makeConfiguration(__DIR__ . '/config.json');
-    $fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper();
+    $fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration);
 
     $separateHelper = new SeparateTestsHandler($fileSystemHelper, $configuration);
 
