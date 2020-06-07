@@ -1,5 +1,17 @@
 # Test Group Separator
 
+## Description:
+It is possible to divide the tests into groups based on:
+1. report.xml of [Codeception](https://codeception.com/) library
+2. Allure reports of [Yandex/Allure](https://github.com/allure-framework/allure-codeception) librariy
+3. The size of the test methods (used if the first 2 do not work)
+
+In addition, the separation depth has 3 levels:
+1. Separation of directories
+2. Separation of files (classes)
+3. Separation by separate methods
+Than smaller the division unit (method < class < directory) that more optimized the division result.
+
 ## Installation
 
 ```
