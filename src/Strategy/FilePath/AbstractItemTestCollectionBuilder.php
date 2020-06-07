@@ -7,6 +7,7 @@ abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBu
 {
     /**
      * @var string
+     * TODO move to constructor
      */
     private $baseTestDirPath;
 
