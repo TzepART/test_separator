@@ -28,7 +28,6 @@ abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBu
         return $this->baseTestDirPath;
     }
 
-    // TODO move to Abstract parent class or another trait
     public function getFilePathsByDirectory(string $workDir): array
     {
         $files     = scandir($workDir);

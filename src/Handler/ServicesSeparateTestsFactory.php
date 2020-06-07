@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use TestSeparator\Configuration;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByMethodSize;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
-use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByCodeceptionReports;
-use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByCodeceptionReports;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByAllureReports;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
@@ -37,15 +38,35 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        if(is_dir($configuration->getCodeceptionReportDir())){
-            return new ItemTestCollectionBuilderByByCodeceptionReports($configuration->getTestsDirectory(), $configuration->getCodeceptionReportDir());
-        }
+//        if(self::checkFilesInDir($configuration->getCodeceptionReportDir())){
+//            return new ItemTestCollectionBuilderByCodeceptionReports($configuration->getTestsDirectory(), $configuration->getCodeceptionReportDir());
+//        }
+//
+//        if(self::checkFilesInDir($configuration->getAllureReportsDirectory())){
+//            return new ItemTestCollectionBuilderByAllureReports($configuration->getTestsDirectory(), $configuration->getAllureReportsDirectory());
+//        }
 
-        return new ItemTestCollectionBuilderByByFileSystem($configuration->getTestsDirectory(), $configuration->getAllureReportsDirectory());
+        return new ItemTestCollectionBuilderByMethodSize($configuration->getTestsDirectory(), $configuration->getTestSuitesDirectories());
     }
 
     public static function makeConfiguration(string $configPath): Configuration
     {
         return new Configuration($configPath);
+    }
+
+    private static function checkFilesInDir(string $directoryPath): bool
+    {
+        if (is_dir($directoryPath)) {
+            return count(
+                    array_filter(
+                        scandir($directoryPath),
+                        static function (string $fileName) {
+                            return !in_array($fileName, ['.', '..']);
+                        }
+                    )
+                ) > 0;
+        }
+
+        return false;
     }
 }

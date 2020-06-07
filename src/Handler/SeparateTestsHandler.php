@@ -16,7 +16,7 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @var \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface
+     * @var DepthLevelStrategyInterface
      */
     private $timeCounterStrategy;
 
@@ -27,7 +27,7 @@ class SeparateTestsHandler
 
     /**
      * @param ItemTestCollectionBuilderInterface $fileSystemHelper
-     * @param \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface $timeCounterStrategy
+     * @param DepthLevelStrategyInterface $timeCounterStrategy
      * @param string $resultPath
      */
     public function __construct(

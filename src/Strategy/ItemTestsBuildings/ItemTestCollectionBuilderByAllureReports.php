@@ -5,7 +5,7 @@ namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use TestSeparator\Model\ItemTestInfo;
 
-class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollectionBuilder
+class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectionBuilder
 {
     /**
      * @var string
@@ -13,7 +13,7 @@ class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollection
     private $allureReportsDirectory;
 
     /**
-     * ItemTestCollectionBuilderByByFileSystem constructor.
+     * ItemTestCollectionBuilderByAllureReports constructor.
      *
      * @param string $baseTestDirPath
      * @param string $allureReportsDirectory

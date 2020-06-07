@@ -8,7 +8,7 @@ use TestSeparator\Model\ItemTestInfo;
 interface DepthLevelStrategyInterface
 {
     /**
-     * @param array|ItemTestInfo[] $testInfoItems
+     * @param ItemTestInfo[]|array $testInfoItems
      *
      * @return array
      */

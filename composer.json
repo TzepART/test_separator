@@ -15,7 +15,8 @@
         "symfony/console": "^4.4",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "codeception/codeception": "^4.0"
+        "codeception/codeception": "^4.0",
+        "symfony/finder": "^4.4"
     },
     "bin": [
         "separate-tests"

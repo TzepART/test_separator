@@ -7,6 +7,11 @@ use TestSeparator\Model\ItemTestInfo;
 
 class DepthDirectoryLevelStrategy implements DepthLevelStrategyInterface
 {
+    /**
+     * @param ItemTestInfo[]|array $testInfoItems
+     *
+     * @return array
+     */
     public function groupTimeEntityWithCountedTime(array $testInfoItems): array
     {
         $timeResults = [];

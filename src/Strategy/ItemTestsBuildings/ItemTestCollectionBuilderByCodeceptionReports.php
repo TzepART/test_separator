@@ -5,7 +5,7 @@ namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use TestSeparator\Model\ItemTestInfo;
 
-class ItemTestCollectionBuilderByByCodeceptionReports extends AbstractItemTestCollectionBuilder
+class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestCollectionBuilder
 {
     /**
      * @var string
@@ -13,7 +13,7 @@ class ItemTestCollectionBuilderByByCodeceptionReports extends AbstractItemTestCo
     private $codeceptionReportDir;
 
     /**
-     * ItemTestCollectionBuilderByByCodeceptionReports constructor.
+     * ItemTestCollectionBuilderByCodeceptionReports constructor.
      *
      * @param string $baseTestDirPath
      * @param string $codeceptionReportDir
