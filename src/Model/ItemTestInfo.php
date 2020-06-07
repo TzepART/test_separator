@@ -10,94 +10,101 @@ class ItemTestInfo
     /**
      * @var string
      */
-    private $dir;
+    private $relativeParentDirectoryPath;
 
     /**
      * @var string
      */
-    private $file;
+    private $testFilePath;
 
     /**
      * @var string
      */
-    private $test;
+    private $relativeTestFilePath;
+
+    /**
+     * @var string
+     */
+    private $testName;
 
     /**
      * @var int
      */
-    private $time;
+    private $timeExecuting;
 
-    /**
-     * @var string
-     */
-    private $relativePath;
 
     /**
      * ItemTestInfo constructor.
      *
-     * @param string $dir
-     * @param string $file
-     * @param string $relativePath
-     * @param string $test
-     * @param int $time
+     * @param string $relativeParentDirectoryPath
+     * @param string $testFilePath
+     * @param string $relativeTestFilePath
+     * @param string $testName
+     * @param int $timeExecuting
      */
-    public function __construct(string $dir, string $file, string $relativePath, string $test, int $time)
-    {
-        $this->dir          = $dir;
-        $this->file         = $file;
-        $this->relativePath = $relativePath;
-        $this->test         = $test;
-        $this->time         = $time;
+    public function __construct(
+        string $relativeParentDirectoryPath,
+        string $testFilePath,
+        string $relativeTestFilePath,
+        string $testName,
+        int $timeExecuting
+    ) {
+
+        $this->relativeParentDirectoryPath = $relativeParentDirectoryPath;
+        $this->testFilePath                = $testFilePath;
+        $this->relativeTestFilePath        = $relativeTestFilePath;
+        $this->testName                    = $testName;
+        $this->timeExecuting               = $timeExecuting;
     }
 
     /**
      * @return string
      */
-    public function getDir(): string
+    public function getRelativeParentDirectoryPath(): string
     {
-        return $this->dir;
+        return $this->relativeParentDirectoryPath;
     }
 
     /**
      * @return string
      */
-    public function getFile(): string
+    public function getTestFilePath(): string
     {
-        return $this->file;
+        return $this->testFilePath;
     }
 
     /**
      * @return string
      */
-    public function getTest(): string
+    public function getRelativeTestFilePath(): string
     {
-        return $this->test;
+        return $this->relativeTestFilePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestName(): string
+    {
+        return $this->testName;
     }
 
     /**
      * @return int
      */
-    public function getTime(): int
+    public function getTimeExecuting(): int
     {
-        return $this->time;
+        return $this->timeExecuting;
     }
 
-    /**
-     * @return string
-     */
-    public function getRelativePath(): string
-    {
-        return $this->relativePath;
-    }
-
-    public function asArray()
+    public function asArray(): array
     {
         return [
-            $this->dir,
-            $this->file,
-            $this->relativePath,
-            $this->test,
-            $this->time,
+            $this->relativeParentDirectoryPath,
+            $this->testFilePath,
+            $this->relativeTestFilePath,
+            $this->testName,
+            $this->timeExecuting,
         ];
     }
 }

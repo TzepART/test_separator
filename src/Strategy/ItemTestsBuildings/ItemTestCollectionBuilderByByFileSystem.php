@@ -34,7 +34,6 @@ class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollection
         $results = [];
         foreach ($filePaths as $filePath) {
             echo $filePath . PHP_EOL;
-            //TODO add catching if xml is Invalid
             $xml = simplexml_load_string(file_get_contents($filePath));
 
             preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);

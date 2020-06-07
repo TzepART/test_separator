@@ -13,8 +13,8 @@ class DepthDirectoryLevelStrategy implements DepthLevelStrategyInterface
 
         /** @var ItemTestInfo $testInfoItem */
         foreach ($testInfoItems as $testInfoItem) {
-            $keyDir = preg_replace('/[A-z0-9]+\.php$/', '', $testInfoItem->getRelativePath());
-            $time   = round(((int) $testInfoItem->getTime()) / 1000, 2);
+            $keyDir = preg_replace('/[A-z0-9]+\.php$/', '', $testInfoItem->getRelativeTestFilePath());
+            $time   = round(((int) $testInfoItem->getTimeExecuting()) / 1000, 2);
             if (isset($timeResults[$keyDir])) {
                 $timeResults[$keyDir] = round($timeResults[$keyDir] + $time, 2);
             } else {
