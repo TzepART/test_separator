@@ -4,5 +4,11 @@
   "codeception-report-directory": "/path/to/file/with/codeception/test/",
   "tests-directory": "/path/to/project/tests/",
   "result-path": "/path/to/project/file/groups/",
-  "level": "class"
+  "level": "class",
+  "test-suites-directories": [
+      "list",
+      "subdirectories",
+      "with",
+      "test-suites"
+  ]
 }

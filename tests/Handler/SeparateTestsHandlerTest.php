@@ -5,7 +5,7 @@ namespace Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
-use \TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
+use \TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByAllureReports;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\ItemTestInfo;
@@ -21,10 +21,10 @@ class SeparateTestsHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $fileSystemHelper = $this->createMock(ItemTestCollectionBuilderByByFileSystem::class);
+        $fileSystemHelper = $this->createMock(ItemTestCollectionBuilderByAllureReports::class);
         $mockResults      = json_decode(file_get_contents(__DIR__ . '/../fixtures/file-system-mock.json'), true);
 
-        /** @var ItemTestCollectionBuilderByByFileSystem $fileSystemHelper */
+        /** @var ItemTestCollectionBuilderByAllureReports $fileSystemHelper */
         $fileSystemHelper->method('getFilePathByTestName')
             ->willReturnCallback(
                 function ($test, $dir) use ($mockResults) {

@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace TestSeparator\Model;
-
 
 /**
  * Class GroupBlockInfo
@@ -30,7 +28,7 @@ class GroupBlockInfo
         return $this->dirTimes;
     }
 
-    public function addDirTime(string $keyDir, float $time)
+    public function addDirTime(string $keyDir, float $time): self
     {
         $this->dirTimes[$keyDir] = $time;
 
@@ -42,7 +40,7 @@ class GroupBlockInfo
      *
      * @return $this
      */
-    public function increaseSumm(float $time)
+    public function increaseSumm(float $time): self
     {
         $this->summTime += $time;
 
@@ -54,7 +52,7 @@ class GroupBlockInfo
      *
      * @return $this
      */
-    public function setSummTime(float $summTime)
+    public function setSummTime(float $summTime): self
     {
         $this->summTime = $summTime;
 
@@ -69,7 +67,7 @@ class GroupBlockInfo
         return $this->summTime;
     }
 
-    public function asArray()
+    public function asArray(): array
     {
         return [
             'dir_time'  => $this->dirTimes,

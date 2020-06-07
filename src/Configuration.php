@@ -36,6 +36,11 @@ class Configuration
     private $depthLevel;
 
     /**
+     * @var array
+     */
+    private $testSuitesDirectories;
+
+    /**
      * Configuration constructor.
      *
      * @param string $configPath
@@ -50,6 +55,7 @@ class Configuration
         $this->testsDirectory         = $config['tests-directory'];
         $this->resultPath             = $config['result-path'];
         $this->depthLevel             = $config['level'];
+        $this->testSuitesDirectories = $config['test-suites-directories'];
     }
 
 
@@ -101,4 +107,11 @@ class Configuration
         return $this->depthLevel;
     }
 
+    /**
+     * @return array
+     */
+    public function getTestSuitesDirectories(): array
+    {
+        return $this->testSuitesDirectories;
+    }
 }
