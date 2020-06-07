@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace TestSeparator\Strategy;
+namespace TestSeparator\Strategy\SeparationDepth;
 
-class MethodDeepStrategyService implements LevelDeepStrategyInterface
+class DepthMethodLevelStrategy implements DepthLevelStrategyInterface
 {
     public function groupTimeEntityWithCountedTime(array $testInfoItems): array
     {

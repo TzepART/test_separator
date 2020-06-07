@@ -4,72 +4,45 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
-use TestSeparator\Configuration;
 use TestSeparator\Model\GroupBlockInfo;
-use TestSeparator\Model\TestInfo;
-use TestSeparator\Strategy\FilePath\TestFilePathInterface;
-use TestSeparator\Strategy\LevelDeepStrategyInterface;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
+use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
 class SeparateTestsHandler
 {
     /**
-     * @var TestFilePathInterface
+     * @var ItemTestCollectionBuilderInterface
      */
     private $fileSystemHelper;
 
     /**
-     * @var string
-     */
-    private $baseTestDirPath;
-
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var LevelDeepStrategyInterface
+     * @var \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface
      */
     private $timeCounterStrategy;
 
     /**
-     * @param TestFilePathInterface $fileSystemHelper
-     * @param Configuration $configuration
-     *
+     * @var string
      */
-    public function __construct(TestFilePathInterface $fileSystemHelper, Configuration $configuration)
-    {
-        $this->fileSystemHelper = $fileSystemHelper;
-        $this->configuration    = $configuration;
-        $this->setBaseTestDirPath($configuration->getTestsDirectory());
-        $this->timeCounterStrategy = ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel());
+    private $resultPath;
+
+    /**
+     * @param ItemTestCollectionBuilderInterface $fileSystemHelper
+     * @param \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface $timeCounterStrategy
+     * @param string $resultPath
+     */
+    public function __construct(
+        ItemTestCollectionBuilderInterface $fileSystemHelper,
+        DepthLevelStrategyInterface $timeCounterStrategy,
+        string $resultPath
+    ) {
+        $this->fileSystemHelper    = $fileSystemHelper;
+        $this->timeCounterStrategy = $timeCounterStrategy;
+        $this->resultPath          = $resultPath;
     }
 
     public function buildTestInfoCollection(): array
     {
-        $filePaths = $this->fileSystemHelper->getFilePathsByDirectory($this->configuration->getAllureReportsDirectory());
-
-        $results = [];
-        foreach ($filePaths as $filePath) {
-            echo $filePath . PHP_EOL;
-            //TODO add catching if xml is Invalid
-            $xml = simplexml_load_string(file_get_contents($filePath));
-
-            preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);
-            $dir = $suitMatches[1];
-            foreach ($xml->{'test-cases'}->children() as $child) {
-                preg_match('/([^ ]+)/', (string) $child->name, $matches);
-                $test = $matches[1];
-                $time = (int) ($child->attributes()->stop - $child->attributes()->start);
-                $file = $this->fileSystemHelper->getFilePathByTestName($test, $dir);
-                if ($file !== '') {
-                    $relativePath = str_replace($this->configuration->getTestsDirectory(), 'tests/', $file);
-                    $results[]    = new TestInfo($dir, $file, $relativePath, $test, $time);
-                }
-            }
-        }
-
-        return $results;
+        return $this->fileSystemHelper->buildTestInfoCollection();
     }
 
     public function groupTimeEntityWithCountedTime($testInfoItems): array
@@ -104,37 +77,20 @@ class SeparateTestsHandler
         return $groupBlockInfoItems;
     }
 
+    // TODO move to file_helper
     public function removeAllGroupFiles(): void
     {
-        $files = scandir($this->configuration->getResultPath()); // get all file names
+        $files = scandir($this->resultPath); // get all file names
         foreach ($files as $file) { // iterate files
-            $filePath = $this->configuration->getResultPath() . $file;
+            $filePath = $this->resultPath . $file;
             if (is_file($filePath)) {
                 unlink($filePath); // delete file
             }
         }
     }
 
-    public function getBaseTestDirPath(): string
-    {
-        return $this->baseTestDirPath;
-    }
-
-    /**
-     * TODO change on setting by config
-     * @param string $baseTestDirPath
-     * @return $this
-     */
-    public function setBaseTestDirPath(string $baseTestDirPath): self
-    {
-        $this->baseTestDirPath = $baseTestDirPath;
-        $this->fileSystemHelper->setBaseTestDirPath($baseTestDirPath);
-
-        return $this;
-    }
-
     public function getGroupDirectoryPath(): string
     {
-        return $this->configuration->getResultPath();
+        return $this->resultPath;
     }
 }

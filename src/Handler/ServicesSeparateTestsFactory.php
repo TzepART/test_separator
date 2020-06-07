@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use TestSeparator\Configuration;
-use TestSeparator\Strategy\DirectoryDeepStrategyService;
-use TestSeparator\Strategy\ClassDeepStrategyService;
-use TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
-use TestSeparator\Strategy\FilePath\TestFilePathInterface;
-use TestSeparator\Strategy\LevelDeepStrategyInterface;
-use TestSeparator\Strategy\MethodDeepStrategyService;
+use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
+use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByCodeceptionReports;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
+use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
+use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 
 class ServicesSeparateTestsFactory
 {
@@ -17,26 +18,30 @@ class ServicesSeparateTestsFactory
     public const CLASS_LEVEL     = 'class';
     public const METHOD_LEVEL    = 'method';
 
-    public static function makeLevelDeepService(string $serviceName): LevelDeepStrategyInterface
+    public static function makeLevelDeepService(string $serviceName): DepthLevelStrategyInterface
     {
         if($serviceName === self::DIRECTORY_LEVEL){
-            return new DirectoryDeepStrategyService();
+            return new DepthDirectoryLevelStrategy();
         }
 
         if($serviceName === self::CLASS_LEVEL){
-            return new ClassDeepStrategyService();
+            return new DepthClassLevelStrategy();
         }
 
         if($serviceName === self::METHOD_LEVEL){
-            return new MethodDeepStrategyService();
+            return new DepthMethodLevelStrategy();
         }
 
         throw new \RuntimeException('DepthLevel is undefined');
     }
 
-    public static function makeTestFilePathHelper(string $serviceName = ''): TestFilePathInterface
+    public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        return new FilePathByFileSystemHelper();
+        if(is_dir($configuration->getCodeceptionReportDir())){
+            return new ItemTestCollectionBuilderByByCodeceptionReports($configuration->getTestsDirectory(), $configuration->getCodeceptionReportDir());
+        }
+
+        return new ItemTestCollectionBuilderByByFileSystem($configuration->getTestsDirectory(), $configuration->getAllureReportsDirectory());
     }
 
     public static function makeConfiguration(string $configPath): Configuration

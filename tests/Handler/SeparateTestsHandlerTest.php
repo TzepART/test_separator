@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
-use TestSeparator\Strategy\DirectoryDeepStrategyService;
-use \TestSeparator\Strategy\FilePath\FilePathByFileSystemHelper;
+use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
+use \TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
-use TestSeparator\Model\TestInfo;
+use TestSeparator\Model\ItemTestInfo;
 
 class SeparateTestsHandlerTest extends TestCase
 {
@@ -21,10 +21,10 @@ class SeparateTestsHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $fileSystemHelper = $this->createMock(FilePathByFileSystemHelper::class);
+        $fileSystemHelper = $this->createMock(ItemTestCollectionBuilderByByFileSystem::class);
         $mockResults      = json_decode(file_get_contents(__DIR__ . '/../fixtures/file-system-mock.json'), true);
 
-        /** @var FilePathByFileSystemHelper $fileSystemHelper */
+        /** @var ItemTestCollectionBuilderByByFileSystem $fileSystemHelper */
         $fileSystemHelper->method('getFilePathByTestName')
             ->willReturnCallback(
                 function ($test, $dir) use ($mockResults) {
@@ -33,8 +33,8 @@ class SeparateTestsHandlerTest extends TestCase
             );
         $fileSystemHelper->method('setBaseTestDirPath');
 
-        /** @var DirectoryDeepStrategyService $levelDeepHelper */
-        $levelDeepHelper = $this->createMock(DirectoryDeepStrategyService::class);
+        /** @var DepthDirectoryLevelStrategy $levelDeepHelper */
+        $levelDeepHelper = $this->createMock(DepthDirectoryLevelStrategy::class);
 
         $this->handler = new SeparateTestsHandler($fileSystemHelper, $levelDeepHelper);
         $this->handler->setBaseTestDirPath('/path/to/project/tests/');
@@ -52,7 +52,7 @@ class SeparateTestsHandlerTest extends TestCase
 
         $this->assertEquals(
             array_map(
-                function (TestInfo $testInfo) {
+                function (ItemTestInfo $testInfo) {
                     return $testInfo->asArray();
                 },
                 $resultArray
@@ -88,7 +88,7 @@ class SeparateTestsHandlerTest extends TestCase
             function (string $string) {
                 $testInfoArray = explode(';', trim($string));
 
-                return new TestInfo($testInfoArray[0], $testInfoArray[1], $testInfoArray[2], (int) $testInfoArray[3]);
+                return new ItemTestInfo($testInfoArray[0], $testInfoArray[1], $testInfoArray[2], (int) $testInfoArray[3]);
             },
             file($inputResultFile)
         );
