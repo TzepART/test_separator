@@ -39,6 +39,7 @@ class ItemTestCollectionBuilderByByCodeceptionReports extends AbstractItemTestCo
 
             foreach ($xml->{'testsuite'}->children() as $testChild) {
                 $file         = (string) $testChild->attributes()->file;
+                // TODO creating relativePath to ItemTestInfo constructor
                 $relativePath = str_replace($this->getBaseTestDirPath(), 'tests/', $file);
                 $dir          = preg_replace('/[A-z0-9]+\.php$/', '', $relativePath);
                 preg_match('/([^ ]+)/', (string) $testChild->attributes()->name, $matches);
