@@ -7,9 +7,18 @@ abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBu
 {
     /**
      * @var string
-     * TODO move to constructor
      */
     private $baseTestDirPath;
+
+    /**
+     * AbstractItemTestCollectionBuilder constructor.
+     *
+     * @param string $baseTestDirPath
+     */
+    public function __construct(string $baseTestDirPath)
+    {
+        $this->baseTestDirPath = $baseTestDirPath;
+    }
 
     /**
      * @return string
@@ -17,18 +26,6 @@ abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBu
     public function getBaseTestDirPath(): string
     {
         return $this->baseTestDirPath;
-    }
-
-    /**
-     * @param string $baseTestDirPath
-     *
-     * @return $this
-     */
-    public function setBaseTestDirPath(string $baseTestDirPath): self
-    {
-        $this->baseTestDirPath = $baseTestDirPath;
-
-        return $this;
     }
 
     // TODO move to Abstract parent class or another trait

@@ -13,14 +13,17 @@ $application = new Application();
 
 // TODO make builder
 try {
-    $configuration    = ServicesSeparateTestsFactory::makeConfiguration(__DIR__ . '/config.json');
-    $fileSystemHelper = ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration);
+    $configuration = ServicesSeparateTestsFactory::makeConfiguration(__DIR__ . '/config.json');
 
-    $separateHelper = new SeparateTestsHandler($fileSystemHelper, $configuration);
+    $separateHandler = new SeparateTestsHandler(
+        ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
+        ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
+        $configuration->getResultPath()
+    );
 
-    $application->add(new SeparateTestsCommand($separateHelper, 'separate'));
+    $application->add(new SeparateTestsCommand($separateHandler, 'separate'));
 
     $application->run();
 } catch (Exception $e) {
-    echo $e->getMessage().PHP_EOL;
+    echo $e->getMessage() . PHP_EOL;
 }

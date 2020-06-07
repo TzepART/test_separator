@@ -13,20 +13,15 @@ class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollection
     private $allureReportsDirectory;
 
     /**
-     * @var string
-     */
-    private $testsDirectory;
-
-    /**
      * ItemTestCollectionBuilderByByFileSystem constructor.
      *
+     * @param string $baseTestDirPath
      * @param string $allureReportsDirectory
-     * @param string $testsDirectory
      */
-    public function __construct(string $allureReportsDirectory, string $testsDirectory)
+    public function __construct(string $baseTestDirPath, string $allureReportsDirectory)
     {
+        parent::__construct($baseTestDirPath);
         $this->allureReportsDirectory = $allureReportsDirectory;
-        $this->testsDirectory         = $testsDirectory;
     }
 
     /**
@@ -50,7 +45,7 @@ class ItemTestCollectionBuilderByByFileSystem extends AbstractItemTestCollection
                 $time = (int) ($child->attributes()->stop - $child->attributes()->start);
                 $file = $this->getFilePathByTestName($test, $dir);
                 if ($file !== '') {
-                    $relativePath = str_replace($this->testsDirectory, 'tests/', $file);
+                    $relativePath = str_replace($this->getBaseTestDirPath(), 'tests/', $file);
                     $results[]    = new ItemTestInfo($dir, $file, $relativePath, $test, $time);
                 }
             }

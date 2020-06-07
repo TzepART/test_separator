@@ -6,6 +6,7 @@ namespace TestSeparator\Handler;
 use TestSeparator\Configuration;
 use TestSeparator\Strategy\DirectoryDeepStrategyService;
 use TestSeparator\Strategy\ClassDeepStrategyService;
+use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByCodeceptionReports;
 use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByFileSystem;
 use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
@@ -36,12 +37,11 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        // TODO ItemTestCollectionBuilderByByFileSystem have to be used, when we couldn't find report.xml
         if(is_dir($configuration->getCodeceptionReportDir())){
-            //
-        }else{
-            return new ItemTestCollectionBuilderByByFileSystem($configuration->getAllureReportsDirectory(), $configuration->getTestsDirectory());
+            return new ItemTestCollectionBuilderByByCodeceptionReports($configuration->getTestsDirectory(), $configuration->getCodeceptionReportDir());
         }
+
+        return new ItemTestCollectionBuilderByByFileSystem($configuration->getTestsDirectory(), $configuration->getAllureReportsDirectory());
     }
 
     public static function makeConfiguration(string $configPath): Configuration

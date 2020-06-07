@@ -14,13 +14,19 @@ class ItemTestCollectionBuilderByByCodeceptionReports extends AbstractItemTestCo
 
     /**
      * ItemTestCollectionBuilderByByCodeceptionReports constructor.
+     *
+     * @param string $baseTestDirPath
      * @param string $codeceptionReportDir
      */
-    public function __construct(string $codeceptionReportDir)
+    public function __construct(string $baseTestDirPath, string $codeceptionReportDir)
     {
+        parent::__construct($baseTestDirPath);
         $this->codeceptionReportDir = $codeceptionReportDir;
     }
 
+    /**
+     * @return ItemTestInfo[]|array
+     */
     public function buildTestInfoCollection(): array
     {
         // TODO: Implement buildTestInfoCollection() method.

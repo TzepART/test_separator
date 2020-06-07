@@ -13,6 +13,4 @@ interface ItemTestCollectionBuilderInterface
     public function buildTestInfoCollection(): array;
 
     public function getBaseTestDirPath(): string;
-
-    public function setBaseTestDirPath(string $baseTestDirPath);
 }

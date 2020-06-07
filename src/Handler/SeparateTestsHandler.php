@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
-use TestSeparator\Configuration;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\LevelDeepStrategyInterface;
@@ -17,26 +16,28 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
      * @var LevelDeepStrategyInterface
      */
     private $timeCounterStrategy;
 
     /**
-     * @param ItemTestCollectionBuilderInterface $fileSystemHelper
-     * @param Configuration $configuration
-     *
+     * @var string
      */
-    public function __construct(ItemTestCollectionBuilderInterface $fileSystemHelper, Configuration $configuration)
-    {
-        $this->fileSystemHelper = $fileSystemHelper;
-        $this->configuration    = $configuration;
-        $this->setBaseTestDirPath($configuration->getTestsDirectory());
-        $this->timeCounterStrategy = ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel());
+    private $resultPath;
+
+    /**
+     * @param ItemTestCollectionBuilderInterface $fileSystemHelper
+     * @param LevelDeepStrategyInterface $timeCounterStrategy
+     * @param string $resultPath
+     */
+    public function __construct(
+        ItemTestCollectionBuilderInterface $fileSystemHelper,
+        LevelDeepStrategyInterface $timeCounterStrategy,
+        string $resultPath
+    ) {
+        $this->fileSystemHelper    = $fileSystemHelper;
+        $this->timeCounterStrategy = $timeCounterStrategy;
+        $this->resultPath          = $resultPath;
     }
 
     public function buildTestInfoCollection(): array
@@ -79,29 +80,17 @@ class SeparateTestsHandler
     // TODO move to file_helper
     public function removeAllGroupFiles(): void
     {
-        $files = scandir($this->configuration->getResultPath()); // get all file names
+        $files = scandir($this->resultPath); // get all file names
         foreach ($files as $file) { // iterate files
-            $filePath = $this->configuration->getResultPath() . $file;
+            $filePath = $this->resultPath . $file;
             if (is_file($filePath)) {
                 unlink($filePath); // delete file
             }
         }
     }
 
-    /**
-     * TODO change on setting by config
-     * @param string $baseTestDirPath
-     * @return $this
-     */
-    public function setBaseTestDirPath(string $baseTestDirPath): self
-    {
-        $this->fileSystemHelper->setBaseTestDirPath($baseTestDirPath);
-
-        return $this;
-    }
-
     public function getGroupDirectoryPath(): string
     {
-        return $this->configuration->getResultPath();
+        return $this->resultPath;
     }
 }
