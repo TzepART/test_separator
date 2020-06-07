@@ -7,7 +7,7 @@
   "level": "class",
   "test-suites-directories": [
       "list",
-      "subdirectories",
+      "sub-directories",
       "with",
       "test-suites"
   ]
