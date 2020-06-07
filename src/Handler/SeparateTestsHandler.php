@@ -6,7 +6,7 @@ namespace TestSeparator\Handler;
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
-use TestSeparator\Strategy\LevelDeepStrategyInterface;
+use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
 class SeparateTestsHandler
 {
@@ -16,7 +16,7 @@ class SeparateTestsHandler
     private $fileSystemHelper;
 
     /**
-     * @var LevelDeepStrategyInterface
+     * @var \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface
      */
     private $timeCounterStrategy;
 
@@ -27,12 +27,12 @@ class SeparateTestsHandler
 
     /**
      * @param ItemTestCollectionBuilderInterface $fileSystemHelper
-     * @param LevelDeepStrategyInterface $timeCounterStrategy
+     * @param \TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface $timeCounterStrategy
      * @param string $resultPath
      */
     public function __construct(
         ItemTestCollectionBuilderInterface $fileSystemHelper,
-        LevelDeepStrategyInterface $timeCounterStrategy,
+        DepthLevelStrategyInterface $timeCounterStrategy,
         string $resultPath
     ) {
         $this->fileSystemHelper    = $fileSystemHelper;

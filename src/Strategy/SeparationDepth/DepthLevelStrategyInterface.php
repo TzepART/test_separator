@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace TestSeparator\Strategy;
+namespace TestSeparator\Strategy\SeparationDepth;
 
 use TestSeparator\Model\ItemTestInfo;
 
-interface LevelDeepStrategyInterface
+interface DepthLevelStrategyInterface
 {
     /**
      * @param array|ItemTestInfo[] $testInfoItems
