@@ -38,15 +38,25 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-//        if(self::checkFilesInDir($configuration->getCodeceptionReportDir())){
-//            return new ItemTestCollectionBuilderByCodeceptionReports($configuration->getTestsDirectory(), $configuration->getCodeceptionReportDir());
-//        }
-//
-//        if(self::checkFilesInDir($configuration->getAllureReportsDirectory())){
-//            return new ItemTestCollectionBuilderByAllureReports($configuration->getTestsDirectory(), $configuration->getAllureReportsDirectory());
-//        }
+        if(self::checkFilesInDir($configuration->getCodeceptionReportDir())){
+            return new ItemTestCollectionBuilderByCodeceptionReports(
+                $configuration->getTestsDirectory(),
+                $configuration->getCodeceptionReportDir()
+            );
+        }
 
-        return new ItemTestCollectionBuilderByMethodSize($configuration->getTestsDirectory(), $configuration->getTestSuitesDirectories());
+        if(self::checkFilesInDir($configuration->getAllureReportsDirectory())){
+            return new ItemTestCollectionBuilderByAllureReports(
+                $configuration->getTestsDirectory(),
+                $configuration->getAllureReportsDirectory(),
+                $configuration->getTestSuitesDirectories()
+            );
+        }
+
+        return new ItemTestCollectionBuilderByMethodSize(
+            $configuration->getTestsDirectory(),
+            $configuration->getTestSuitesDirectories()
+        );
     }
 
     public static function makeConfiguration(string $configPath): Configuration

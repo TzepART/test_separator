@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestSeparator\Strategy\ItemTestsBuildings;
 
+use Symfony\Component\Finder\Finder;
 use TestSeparator\Model\ItemTestInfo;
 
 class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectionBuilder
@@ -13,15 +14,33 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
     private $allureReportsDirectory;
 
     /**
+     * @var array
+     */
+    private $testSuitesDirectories;
+
+    /**
+     * @var array
+     */
+    private $testsInfoMap = [];
+
+    /**
+     * @var Finder
+     */
+    private $fileFinder;
+
+    /**
      * ItemTestCollectionBuilderByAllureReports constructor.
      *
      * @param string $baseTestDirPath
      * @param string $allureReportsDirectory
+     * @param array $testSuitesDirectories
      */
-    public function __construct(string $baseTestDirPath, string $allureReportsDirectory)
+    public function __construct(string $baseTestDirPath, string $allureReportsDirectory, array $testSuitesDirectories)
     {
         parent::__construct($baseTestDirPath);
         $this->allureReportsDirectory = $allureReportsDirectory;
+        $this->testSuitesDirectories  = $testSuitesDirectories;
+        $this->fileFinder             = new Finder();
     }
 
     /**
@@ -29,6 +48,7 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
      */
     public function buildTestInfoCollection(): array
     {
+        $this->buildTestInfoMap();
         $filePaths = $this->getFilePathsByDirectory($this->allureReportsDirectory);
 
         $results = [];
@@ -37,15 +57,22 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
             $xml = simplexml_load_string(file_get_contents($filePath));
 
             preg_match('/Support\.([a-z]+)/', (string) $xml->name, $suitMatches);
-            $dir = $suitMatches[1];
+            $relativeParentDirectoryPath = $suitMatches[1];
             foreach ($xml->{'test-cases'}->children() as $child) {
                 preg_match('/([^ ]+)/', (string) $child->name, $matches);
-                $test = $matches[1];
-                $time = (int) ($child->attributes()->stop - $child->attributes()->start);
-                $file = $this->getFilePathByTestName($test, $dir);
-                if ($file !== '') {
-                    $relativePath = str_replace($this->getBaseTestDirPath(), 'tests/', $file);
-                    $results[]    = new ItemTestInfo($dir, $file, $relativePath, $test, $time);
+                $testName      = $matches[1];
+                $timeExecuting = (int) ($child->attributes()->stop - $child->attributes()->start);
+                $testKey       = sprintf('%s:%s', $relativeParentDirectoryPath, $testName);
+                $testFilePath  = $this->testsInfoMap[$testKey];
+                if ($testFilePath !== '') {
+                    $relativeTestFilePath = str_replace($this->getBaseTestDirPath(), 'tests/', $testFilePath);
+                    $results[]            = new ItemTestInfo(
+                        $relativeParentDirectoryPath,
+                        $testFilePath,
+                        $relativeTestFilePath,
+                        $testName,
+                        $timeExecuting
+                    );
                 }
             }
         }
@@ -53,19 +80,23 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
         return $results;
     }
 
-    /**
-     * @param string $testName
-     * @param string $parentDir
-     *
-     * @return string
-     */
-    private function getFilePathByTestName(string $testName, string $parentDir): string
+    private function buildTestInfoMap(): void
     {
-        $patternCommand = 'grep -R "%s" -l ' . $this->getBaseTestDirPath() . '%s | head -1';
-        $file           = shell_exec(sprintf($patternCommand, $testName, $parentDir)) ?? '';
+        foreach ($this->testSuitesDirectories as $index => $testSuitesDirectory) {
+            $filePaths = $this->fileFinder->files()->in($this->getBaseTestDirPath() . $testSuitesDirectory . '/');
 
-        return trim($file);
+            foreach ($filePaths as $filePath) {
+                $testFilePath = $filePath->getRealPath();
+                preg_match_all('/public function (test[^(]+)/', file_get_contents($testFilePath), $matches);
+
+                if (isset($matches[1]) && is_array($matches[1])) {
+                    foreach ($matches[1] as $testName) {
+                        $testKey                      = sprintf('%s:%s', $testSuitesDirectory, $testName);
+                        $this->testsInfoMap[$testKey] = $testFilePath;
+                    }
+                }
+            }
+        }
+
     }
-
-
 }
