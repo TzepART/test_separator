@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace TestSeparator\Strategy\FilePath;
+namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 
 class ItemTestCollectionBuilderByClassMapSystem extends AbstractItemTestCollectionBuilder

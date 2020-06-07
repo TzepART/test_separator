@@ -5,7 +5,7 @@ namespace Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
-use \TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByFileSystem;
+use \TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Model\ItemTestInfo;

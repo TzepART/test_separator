@@ -6,9 +6,9 @@ namespace TestSeparator\Handler;
 use TestSeparator\Configuration;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
-use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByCodeceptionReports;
-use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderByByFileSystem;
-use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByCodeceptionReports;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByByFileSystem;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 

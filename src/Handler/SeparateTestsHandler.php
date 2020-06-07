@@ -5,7 +5,7 @@ namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Model\GroupBlockInfo;
-use TestSeparator\Strategy\FilePath\ItemTestCollectionBuilderInterface;
+use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
 class SeparateTestsHandler
