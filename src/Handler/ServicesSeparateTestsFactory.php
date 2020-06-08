@@ -59,11 +59,6 @@ class ServicesSeparateTestsFactory
         );
     }
 
-    public static function makeConfiguration(string $configPath): Configuration
-    {
-        return new Configuration($configPath);
-    }
-
     private static function checkFilesInDir(string $directoryPath): bool
     {
         if (is_dir($directoryPath)) {

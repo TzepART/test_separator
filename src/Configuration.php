@@ -43,19 +43,17 @@ class Configuration
     /**
      * Configuration constructor.
      *
-     * @param string $configPath
-     * TODO add validation of each params
+     * @param array $config
      */
-    public function __construct(string $configPath)
+    public function __construct(array $config)
     {
-        $config                       = json_decode(file_get_contents($configPath), true);
-        $this->strategy               = $config['strategy'];
-        $this->allureReportsDirectory = $config['allure-reports-directory'];
-        $this->codeceptionReportDir   = $config['codeception-report-directory'];
-        $this->testsDirectory         = $config['tests-directory'];
-        $this->resultPath             = $config['result-path'];
-        $this->depthLevel             = $config['level'];
-        $this->testSuitesDirectories = $config['test-suites-directories'];
+        $this->strategy               = $config['strategy'] ?? '';
+        $this->allureReportsDirectory = $config['allure-reports-directory'] ?? '';
+        $this->codeceptionReportDir   = $config['codeception-report-directory'] ?? '';
+        $this->testsDirectory         = $config['tests-directory'] ?? '';
+        $this->resultPath             = $config['result-path'] ?? '';
+        $this->depthLevel             = $config['level'] ?? '';
+        $this->testSuitesDirectories  = $config['test-suites-directories'] ?? [];
     }
 
 
