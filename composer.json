@@ -1,8 +1,20 @@
 {
     "name": "tzepart/test-separator",
-    "license": "proprietary",
-    "type": "project",
-    "description": "Project for separating",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/TzepART/test-separator.git",
+    "description": "Project for separating of tests",
+    "keywords": [
+        "tests",
+        "codeception",
+        "tests groups"
+    ],
+    "authors": [
+        {
+            "name": "Tsepkov Artem",
+            "email": "tzepart@gmail.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "TestSeparator\\": "src/",
