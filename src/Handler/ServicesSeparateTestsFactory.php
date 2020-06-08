@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use TestSeparator\Configuration;
-use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByMethodSize;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
@@ -43,14 +42,14 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        if(FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())){
+        if($configuration->getSeparatingStrategy() === self::CODECEPTION_SEPARATING_STRATEGY){
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getCodeceptionReportsDir()
             );
         }
 
-        if(FileSystemHelper::checkFilesInDir($configuration->getAllureReportsDirectory())){
+        if($configuration->getSeparatingStrategy() === self::ALLURE_REPORTS_SEPARATING_STRATEGY){
             return new ItemTestCollectionBuilderByAllureReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getAllureReportsDirectory(),
@@ -58,9 +57,13 @@ class ServicesSeparateTestsFactory
             );
         }
 
-        return new ItemTestCollectionBuilderByMethodSize(
-            $configuration->getTestsDirectory(),
-            $configuration->getTestSuitesDirectories()
-        );
+        if($configuration->getSeparatingStrategy() === self::METHOD_SIZE_SEPARATING_STRATEGY){
+            return new ItemTestCollectionBuilderByMethodSize(
+                $configuration->getTestsDirectory(),
+                $configuration->getTestSuitesDirectories()
+            );
+        }
+
+        throw new \RuntimeException('Separating strategy is undefined');
     }
 }
