@@ -1,6 +1,6 @@
 {
   "separating-strategy": "codeception-report",
-  "use-default-separating-strategy": true,
+  "use-default-separating-strategy": false,
   "allure-reports-directory": "/path/to/file/with/allure/reports/directory/",
   "codeception-reports-directory": "/path/to/file/with/codeception/test/",
   "tests-directory": "/path/to/project/tests/",
