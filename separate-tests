@@ -12,9 +12,9 @@ require 'vendor/autoload.php';
 
 $application = new Application();
 
-// TODO make builder
 try {
-    $configuration = ConfigurationFactory::makeConfiguration(__DIR__ . '/config.json');
+    // TODO use standard symfony configuration
+    $configuration = ConfigurationFactory::makeConfiguration('config/packages/test_separator.yaml');
 
     $separateHandler = new SeparateTestsHandler(
         ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),

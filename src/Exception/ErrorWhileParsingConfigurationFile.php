@@ -5,5 +5,5 @@ namespace TestSeparator\Exception;
 
 class ErrorWhileParsingConfigurationFile extends ValidationOfConfigurationException
 {
-    public const MESSAGE_TEMPLATE = 'Error while parsing configuration file. Error - %s';
+    public const MESSAGE = 'Error while parsing configuration file.';
 }
