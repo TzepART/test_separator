@@ -5,6 +5,7 @@ namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
 use TestSeparator\Model\GroupBlockInfo;
+use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
@@ -77,16 +78,9 @@ class SeparateTestsHandler
         return $groupBlockInfoItems;
     }
 
-    // TODO move to file_helper
     public function removeAllGroupFiles(): void
     {
-        $files = scandir($this->resultPath); // get all file names
-        foreach ($files as $file) { // iterate files
-            $filePath = $this->resultPath . $file;
-            if (is_file($filePath)) {
-                unlink($filePath); // delete file
-            }
-        }
+        FileSystemHelper::removeAllFilesInDirectory($this->getGroupDirectoryPath());
     }
 
     public function getGroupDirectoryPath(): string

@@ -7,5 +7,4 @@ use \InvalidArgumentException;
 
 class ValidationOfConfigurationException extends InvalidArgumentException
 {
-
 }

@@ -23,7 +23,7 @@ class Configuration
     /**
      * @var string
      */
-    private $codeceptionReportDir;
+    private $codeceptionReportsDir;
 
     /**
      * @var string
@@ -53,9 +53,9 @@ class Configuration
     public function __construct(array $config)
     {
         $this->separatingStrategy           = $config['separating-strategy'] ?? '';
-        $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? true;
+        $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? false;
         $this->allureReportsDirectory       = $config['allure-reports-directory'] ?? '';
-        $this->codeceptionReportDir         = $config['codeception-report-directory'] ?? '';
+        $this->codeceptionReportsDir        = $config['codeception-reports-directory'] ?? '';
         $this->testsDirectory               = $config['tests-directory'] ?? '';
         $this->resultPath                   = $config['result-path'] ?? '';
         $this->depthLevel                   = $config['level'] ?? '';
@@ -69,6 +69,14 @@ class Configuration
     public function getSeparatingStrategy(): string
     {
         return $this->separatingStrategy;
+    }
+
+    /**
+     * @param string $separatingStrategy
+     */
+    public function setSeparatingStrategy(string $separatingStrategy): void
+    {
+        $this->separatingStrategy = $separatingStrategy;
     }
 
     /**
@@ -98,9 +106,9 @@ class Configuration
     /**
      * @return string
      */
-    public function getCodeceptionReportDir(): string
+    public function getCodeceptionReportsDir(): string
     {
-        return $this->codeceptionReportDir;
+        return $this->codeceptionReportsDir;
     }
 
     /**

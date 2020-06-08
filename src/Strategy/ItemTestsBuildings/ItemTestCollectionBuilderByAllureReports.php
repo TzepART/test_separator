@@ -5,6 +5,7 @@ namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use Symfony\Component\Finder\Finder;
 use TestSeparator\Model\ItemTestInfo;
+use TestSeparator\Service\FileSystemHelper;
 
 class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectionBuilder
 {
@@ -49,7 +50,7 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
     public function buildTestInfoCollection(): array
     {
         $this->buildTestInfoMap();
-        $filePaths = $this->getFilePathsByDirectory($this->allureReportsDirectory);
+        $filePaths = FileSystemHelper::getFilePathsByDirectory($this->allureReportsDirectory);
 
         $results = [];
         foreach ($filePaths as $filePath) {

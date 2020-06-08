@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use TestSeparator\Configuration;
+use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByMethodSize;
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
@@ -15,6 +16,10 @@ use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 
 class ServicesSeparateTestsFactory
 {
+    public const CODECEPTION_SEPARATING_STRATEGY    = 'codeception-report';
+    public const ALLURE_REPORTS_SEPARATING_STRATEGY = 'allure-report';
+    public const METHOD_SIZE_SEPARATING_STRATEGY    = 'method-size';
+
     public const DIRECTORY_LEVEL = 'directory';
     public const CLASS_LEVEL     = 'class';
     public const METHOD_LEVEL    = 'method';
@@ -38,14 +43,14 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        if(self::checkFilesInDir($configuration->getCodeceptionReportDir())){
+        if(FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())){
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
-                $configuration->getCodeceptionReportDir()
+                $configuration->getCodeceptionReportsDir()
             );
         }
 
-        if(self::checkFilesInDir($configuration->getAllureReportsDirectory())){
+        if(FileSystemHelper::checkFilesInDir($configuration->getAllureReportsDirectory())){
             return new ItemTestCollectionBuilderByAllureReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getAllureReportsDirectory(),
@@ -57,21 +62,5 @@ class ServicesSeparateTestsFactory
             $configuration->getTestsDirectory(),
             $configuration->getTestSuitesDirectories()
         );
-    }
-
-    private static function checkFilesInDir(string $directoryPath): bool
-    {
-        if (is_dir($directoryPath)) {
-            return count(
-                    array_filter(
-                        scandir($directoryPath),
-                        static function (string $fileName) {
-                            return !in_array($fileName, ['.', '..']);
-                        }
-                    )
-                ) > 0;
-        }
-
-        return false;
     }
 }
