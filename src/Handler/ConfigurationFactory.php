@@ -6,6 +6,7 @@ namespace TestSeparator\Handler;
 use TestSeparator\Configuration;
 use TestSeparator\Exception\ConfigurationFileDoesNotExist;
 use TestSeparator\Exception\ErrorWhileParsingConfigurationFile;
+use TestSeparator\Service\ConfigurationValidator;
 
 class ConfigurationFactory
 {
@@ -15,7 +16,7 @@ class ConfigurationFactory
 
         $configuration = new Configuration($config);
 
-        self::configurationValidate($configuration);
+        (new ConfigurationValidator($configuration))->validate();
 
         return $configuration;
     }
@@ -41,10 +42,5 @@ class ConfigurationFactory
         }
 
         return $config;
-    }
-
-    private static function configurationValidate(Configuration $configuration): void
-    {
-
     }
 }

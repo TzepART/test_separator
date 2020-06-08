@@ -8,7 +8,12 @@ class Configuration
     /**
      * @var string
      */
-    private $strategy;
+    private $separatingStrategy;
+
+    /**
+     * @var bool
+     */
+    private $useDefaultSeparatingStrategy;
 
     /**
      * @var string
@@ -47,22 +52,31 @@ class Configuration
      */
     public function __construct(array $config)
     {
-        $this->strategy               = $config['strategy'] ?? '';
-        $this->allureReportsDirectory = $config['allure-reports-directory'] ?? '';
-        $this->codeceptionReportDir   = $config['codeception-report-directory'] ?? '';
-        $this->testsDirectory         = $config['tests-directory'] ?? '';
-        $this->resultPath             = $config['result-path'] ?? '';
-        $this->depthLevel             = $config['level'] ?? '';
-        $this->testSuitesDirectories  = $config['test-suites-directories'] ?? [];
+        $this->separatingStrategy           = $config['separating-strategy'] ?? '';
+        $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? true;
+        $this->allureReportsDirectory       = $config['allure-reports-directory'] ?? '';
+        $this->codeceptionReportDir         = $config['codeception-report-directory'] ?? '';
+        $this->testsDirectory               = $config['tests-directory'] ?? '';
+        $this->resultPath                   = $config['result-path'] ?? '';
+        $this->depthLevel                   = $config['level'] ?? '';
+        $this->testSuitesDirectories        = $config['test-suites-directories'] ?? [];
     }
 
 
     /**
      * @return string
      */
-    public function getStrategy(): string
+    public function getSeparatingStrategy(): string
     {
-        return $this->strategy;
+        return $this->separatingStrategy;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseDefaultSeparatingStrategy(): bool
+    {
+        return $this->useDefaultSeparatingStrategy;
     }
 
     /**
