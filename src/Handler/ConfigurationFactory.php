@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestSeparator\Handler;
 
+use Symfony\Component\Yaml\Yaml;
 use TestSeparator\Configuration;
 use TestSeparator\Exception\ConfigurationFileDoesNotExist;
 use TestSeparator\Exception\ErrorWhileParsingConfigurationFile;
@@ -12,8 +13,7 @@ class ConfigurationFactory
 {
     public static function makeConfiguration(string $configPath): Configuration
     {
-        $config = self::configurationFileValidate($configPath);
-
+        $config        = self::configurationFileValidate($configPath);
         $configuration = new Configuration($config);
 
         (new ConfigurationValidator($configuration))->validate();
@@ -34,13 +34,12 @@ class ConfigurationFactory
             throw new ConfigurationFileDoesNotExist(ConfigurationFileDoesNotExist::MESSAGE);
         }
 
-        $config = json_decode(file_get_contents($configPath), true);
+        $config = Yaml::parse(file_get_contents($configPath));
 
-        if ($config === null) {
-            $errorMessage = json_last_error_msg();
-            throw new ErrorWhileParsingConfigurationFile(sprintf(ErrorWhileParsingConfigurationFile::MESSAGE_TEMPLATE, $errorMessage));
+        if (!isset($config['test_separator']) || !is_array($config['test_separator'])) {
+            throw new ErrorWhileParsingConfigurationFile(ErrorWhileParsingConfigurationFile::MESSAGE);
         }
 
-        return $config;
+        return $config['test_separator'];
     }
 }

@@ -16,27 +16,45 @@ Than smaller the division unit (method < class < directory) that more optimized 
 
 ```
 composer require tzepart/test-separator
-cp config.json.dist config.json
 ```
 
 Add your configuration to config.json
 
-### Pay attention
-Parameter `level` can be one of these values:
-* directory
-* class
-* method
+### Configuration
+Add configuration file `config/packages/test_separator.yaml`
+
+```yaml
+test_separator:
+  separating-strategy: 'codeception-report'
+  use-default-separating-strategy: false
+  allure-reports-directory: '/path/to/file/with/allure/reports/directory/'
+  codeception-reports-directory: '/path/to/file/with/codeception/test/'
+  tests-directory: '/path/to/project/tests/'
+  result-path: '/path/to/project/file/groups/'
+  level: 'method'
+  test-suites-directories:
+      - 'list'
+      - 'sub-directories'
+      - 'with'
+      - 'test-suites'
+```
 
 Parameter `separating-strategy` can be one of these values:
 * codeception-report
 * allure-report
 * method-size
 
-If parameter `use-default-separating-strategy: true` than, if we can't use `codeception-report` strategy or `allure-report` we'll try use default strategy (`method-size`)
+If parameter `use-default-separating-strategy: true` than, if we can't use `codeception-report` strategy or `allure-report` 
+we'll try use default strategy (`method-size`)
 
 Parameter `tests-directory` - path to directory where is yours tests
 
 Parameter `result-path`- path to directory where final groups files will be
+
+Parameter `level` can be one of these values:
+* directory
+* class
+* method
 
 ## Manual running
 ```
