@@ -63,13 +63,11 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
                 $testName      = $matches[1];
                 $timeExecuting = (int) ($child->attributes()->stop - $child->attributes()->start);
                 $testKey       = sprintf('%s:%s', $relativeParentDirectoryPath, $testName);
-                $testFilePath  = $this->testsInfoMap[$testKey];
-                if ($testFilePath !== '') {
-                    $relativeTestFilePath = str_replace($this->getBaseTestDirPath(), 'tests/', $testFilePath);
-                    $results[]            = new ItemTestInfo(
+                if (isset($this->testsInfoMap[$testKey]) && $this->testsInfoMap[$testKey]['path'] !== '') {
+                    $results[] = new ItemTestInfo(
                         $relativeParentDirectoryPath,
-                        $testFilePath,
-                        $relativeTestFilePath,
+                        $this->testsInfoMap[$testKey]['path'],
+                        $this->testsInfoMap[$testKey]['relative-path'],
                         $testName,
                         $timeExecuting
                     );
@@ -83,7 +81,8 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
     private function buildTestInfoMap(): void
     {
         foreach ($this->testSuitesDirectories as $index => $testSuitesDirectory) {
-            $filePaths = $this->fileFinder->files()->in($this->getBaseTestDirPath() . $testSuitesDirectory . '/');
+            $parentDir = $this->getBaseTestDirPath() . $testSuitesDirectory . '/';
+            $filePaths = $this->fileFinder->files()->in($parentDir);
 
             foreach ($filePaths as $filePath) {
                 $testFilePath = $filePath->getRealPath();
@@ -92,7 +91,10 @@ class ItemTestCollectionBuilderByAllureReports extends AbstractItemTestCollectio
                 if (isset($matches[1]) && is_array($matches[1])) {
                     foreach ($matches[1] as $testName) {
                         $testKey                      = sprintf('%s:%s', $testSuitesDirectory, $testName);
-                        $this->testsInfoMap[$testKey] = $testFilePath;
+                        $this->testsInfoMap[$testKey] = [
+                            'path'          => $testFilePath,
+                            'relative-path' => $parentDir . $filePath->getRelativePathname(),
+                        ];
                     }
                 }
             }
