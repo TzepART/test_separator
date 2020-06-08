@@ -13,6 +13,7 @@ use TestSeparator\Exception\PathToAllureReporstDirIsEmptyException;
 use TestSeparator\Exception\PathToCodeceptionReportsDirIsEmptyException;
 use TestSeparator\Exception\SuitesDirectoriesCollectionIsEmptyException;
 use TestSeparator\Exception\UnknownSeparatingStrategyException;
+use TestSeparator\Exception\ValidationOfConfigurationException;
 use TestSeparator\Handler\ServicesSeparateTestsFactory;
 
 class ConfigurationValidator
@@ -57,18 +58,6 @@ class ConfigurationValidator
 
     public function validate(): void
     {
-        if (!in_array($this->configuration->getSeparatingStrategy(), self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
-            if ($this->configuration->isUseDefaultSeparatingStrategy()) {
-                $this->configuration->setSeparatingStrategy(ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY);
-            } else {
-                throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY);
-            }
-        }
-
-        if (!in_array($this->configuration->getDepthLevel(), self::AVAILABLE_DEPTH_LEVELS, true)) {
-            throw new NotAvailableDepthLevelException(self::NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT);
-        }
-
         if (!is_dir($this->configuration->getTestsDirectory())) {
             throw new InvalidPathToTestsDirectoryException(self::PATH_TO_TESTS_DIRECTORY_IS_INVALID);
         }
@@ -77,26 +66,47 @@ class ConfigurationValidator
             throw new InvalidPathToResultDirectoryException(self::PATH_TO_RESULTS_DIRECTORY_IS_INVALID);
         }
 
+        if (!in_array($this->configuration->getDepthLevel(), self::AVAILABLE_DEPTH_LEVELS, true)) {
+            throw new NotAvailableDepthLevelException(self::NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT);
+        }
+
+        try {
+            $this->validateConfigurationForSeparatingByReports();
+        } catch (ValidationOfConfigurationException $e) {
+            if ($this->configuration->isUseDefaultSeparatingStrategy()) {
+                $this->configuration->setSeparatingStrategy(ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY);
+            } else {
+                throw $e;
+            }
+        }
+
         $separatingStrategy = $this->configuration->getSeparatingStrategy();
         if ($separatingStrategy === ServicesSeparateTestsFactory::ALLURE_REPORTS_SEPARATING_STRATEGY ||
             $separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
             if (count($this->configuration->getTestSuitesDirectories()) === 0) {
                 throw new SuitesDirectoriesCollectionIsEmptyException(self::TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY);
             }
-
             //TODO add validation that all Tests Suites Directories contain tests (?)
         }
+    }
 
-        if ($separatingStrategy === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
+    /**
+     * @throws ValidationOfConfigurationException
+     */
+    private function validateConfigurationForSeparatingByReports(): void
+    {
+        if (!in_array($this->configuration->getSeparatingStrategy(), self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
+            throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY);
+        }
+
+        if ($this->configuration->getSeparatingStrategy() === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
             if ($this->configuration->getCodeceptionReportsDir() === '') {
                 throw new PathToCodeceptionReportsDirIsEmptyException(self::PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
             }
             if (!FileSystemHelper::checkFilesInDir($this->configuration->getCodeceptionReportsDir())) {
                 throw new CodeceptionReportsDirIsEmptyException(self::CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
             }
-        }
-
-        if ($separatingStrategy === ServicesSeparateTestsFactory::ALLURE_REPORTS_SEPARATING_STRATEGY) {
+        } else if ($this->configuration->getSeparatingStrategy() === ServicesSeparateTestsFactory::ALLURE_REPORTS_SEPARATING_STRATEGY) {
             if ($this->configuration->getAllureReportsDirectory() === '') {
                 throw new PathToAllureReporstDirIsEmptyException(self::PATH_TO_ALLURE_REPORTS_DIRECTORY_IS_EMPTY);
             }
@@ -104,7 +114,5 @@ class ConfigurationValidator
                 throw new AllureReportsDirIsEmptyException(self::ALLURE_REPORTS_DIRECTORY_IS_EMPTY);
             }
         }
-
-
     }
 }
