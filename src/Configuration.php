@@ -8,7 +8,12 @@ class Configuration
     /**
      * @var string
      */
-    private $strategy;
+    private $separatingStrategy;
+
+    /**
+     * @var bool
+     */
+    private $useDefaultSeparatingStrategy;
 
     /**
      * @var string
@@ -18,7 +23,7 @@ class Configuration
     /**
      * @var string
      */
-    private $codeceptionReportDir;
+    private $codeceptionReportsDir;
 
     /**
      * @var string
@@ -43,28 +48,43 @@ class Configuration
     /**
      * Configuration constructor.
      *
-     * @param string $configPath
-     * TODO add validation of each params
+     * @param array $config
      */
-    public function __construct(string $configPath)
+    public function __construct(array $config)
     {
-        $config                       = json_decode(file_get_contents($configPath), true);
-        $this->strategy               = $config['strategy'];
-        $this->allureReportsDirectory = $config['allure-reports-directory'];
-        $this->codeceptionReportDir   = $config['codeception-report-directory'];
-        $this->testsDirectory         = $config['tests-directory'];
-        $this->resultPath             = $config['result-path'];
-        $this->depthLevel             = $config['level'];
-        $this->testSuitesDirectories = $config['test-suites-directories'];
+        $this->separatingStrategy           = $config['separating-strategy'] ?? '';
+        $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? false;
+        $this->allureReportsDirectory       = $config['allure-reports-directory'] ?? '';
+        $this->codeceptionReportsDir        = $config['codeception-reports-directory'] ?? '';
+        $this->testsDirectory               = $config['tests-directory'] ?? '';
+        $this->resultPath                   = $config['result-path'] ?? '';
+        $this->depthLevel                   = $config['level'] ?? '';
+        $this->testSuitesDirectories        = $config['test-suites-directories'] ?? [];
     }
 
 
     /**
      * @return string
      */
-    public function getStrategy(): string
+    public function getSeparatingStrategy(): string
     {
-        return $this->strategy;
+        return $this->separatingStrategy;
+    }
+
+    /**
+     * @param string $separatingStrategy
+     */
+    public function setSeparatingStrategy(string $separatingStrategy): void
+    {
+        $this->separatingStrategy = $separatingStrategy;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseDefaultSeparatingStrategy(): bool
+    {
+        return $this->useDefaultSeparatingStrategy;
     }
 
     /**
@@ -86,9 +106,9 @@ class Configuration
     /**
      * @return string
      */
-    public function getCodeceptionReportDir(): string
+    public function getCodeceptionReportsDir(): string
     {
-        return $this->codeceptionReportDir;
+        return $this->codeceptionReportsDir;
     }
 
     /**

@@ -22,14 +22,21 @@ cp config.json.dist config.json
 Add your configuration to config.json
 
 ### Pay attention
-Field `level` can be one of these values:
+Parameter `level` can be one of these values:
 * directory
 * class
 * method
 
-Field `tests-directory` - path to directory where is yours tests
+Parameter `separating-strategy` can be one of these values:
+* codeception-report
+* allure-report
+* method-size
 
-Field `result-path`- path to directory where final groups files will be
+If parameter `use-default-separating-strategy: true` than, if we can't use `codeception-report` strategy or `allure-report` we'll try use default strategy (`method-size`)
+
+Parameter `tests-directory` - path to directory where is yours tests
+
+Parameter `result-path`- path to directory where final groups files will be
 
 ## Manual running
 ```
@@ -43,4 +50,3 @@ Run test
 ```
 ./vendor/bin/phpunit --bootstrap vendor/autoload.php
 ``` 
-

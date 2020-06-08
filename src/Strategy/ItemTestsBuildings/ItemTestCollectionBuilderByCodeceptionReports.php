@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use TestSeparator\Model\ItemTestInfo;
+use TestSeparator\Service\FileSystemHelper;
 
 class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestCollectionBuilder
 {
@@ -29,7 +30,7 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
      */
     public function buildTestInfoCollection(): array
     {
-        $filePaths = $this->getFilePathsByDirectory($this->codeceptionReportDir);
+        $filePaths = FileSystemHelper::getFilePathsByDirectory($this->codeceptionReportDir);
 
         $results = [];
         foreach ($filePaths as $filePath) {

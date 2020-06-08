@@ -15,6 +15,10 @@ use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 
 class ServicesSeparateTestsFactory
 {
+    public const CODECEPTION_SEPARATING_STRATEGY    = 'codeception-report';
+    public const ALLURE_REPORTS_SEPARATING_STRATEGY = 'allure-report';
+    public const METHOD_SIZE_SEPARATING_STRATEGY    = 'method-size';
+
     public const DIRECTORY_LEVEL = 'directory';
     public const CLASS_LEVEL     = 'class';
     public const METHOD_LEVEL    = 'method';
@@ -38,14 +42,14 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        if(self::checkFilesInDir($configuration->getCodeceptionReportDir())){
+        if($configuration->getSeparatingStrategy() === self::CODECEPTION_SEPARATING_STRATEGY){
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
-                $configuration->getCodeceptionReportDir()
+                $configuration->getCodeceptionReportsDir()
             );
         }
 
-        if(self::checkFilesInDir($configuration->getAllureReportsDirectory())){
+        if($configuration->getSeparatingStrategy() === self::ALLURE_REPORTS_SEPARATING_STRATEGY){
             return new ItemTestCollectionBuilderByAllureReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getAllureReportsDirectory(),
@@ -53,30 +57,13 @@ class ServicesSeparateTestsFactory
             );
         }
 
-        return new ItemTestCollectionBuilderByMethodSize(
-            $configuration->getTestsDirectory(),
-            $configuration->getTestSuitesDirectories()
-        );
-    }
-
-    public static function makeConfiguration(string $configPath): Configuration
-    {
-        return new Configuration($configPath);
-    }
-
-    private static function checkFilesInDir(string $directoryPath): bool
-    {
-        if (is_dir($directoryPath)) {
-            return count(
-                    array_filter(
-                        scandir($directoryPath),
-                        static function (string $fileName) {
-                            return !in_array($fileName, ['.', '..']);
-                        }
-                    )
-                ) > 0;
+        if($configuration->getSeparatingStrategy() === self::METHOD_SIZE_SEPARATING_STRATEGY){
+            return new ItemTestCollectionBuilderByMethodSize(
+                $configuration->getTestsDirectory(),
+                $configuration->getTestSuitesDirectories()
+            );
         }
 
-        return false;
+        throw new \RuntimeException('Separating strategy is undefined');
     }
 }

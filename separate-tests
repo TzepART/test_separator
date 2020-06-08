@@ -6,6 +6,7 @@ use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\SeparateTestsHandler;
 use \TestSeparator\Handler\ServicesSeparateTestsFactory;
+use \TestSeparator\Handler\ConfigurationFactory;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -13,7 +14,7 @@ $application = new Application();
 
 // TODO make builder
 try {
-    $configuration = ServicesSeparateTestsFactory::makeConfiguration(__DIR__ . '/config.json');
+    $configuration = ConfigurationFactory::makeConfiguration(__DIR__ . '/config.json');
 
     $separateHandler = new SeparateTestsHandler(
         ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),

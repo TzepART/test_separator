@@ -27,18 +27,4 @@ abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBu
     {
         return $this->baseTestDirPath;
     }
-
-    public function getFilePathsByDirectory(string $workDir): array
-    {
-        $files     = scandir($workDir);
-        $filePaths = [];
-        foreach ($files as $file) {
-            $filePath = $workDir . $file;
-            if (is_file($filePath)) {
-                $filePaths[] = $filePath;
-            }
-        }
-
-        return $filePaths;
-    }
 }
