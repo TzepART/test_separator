@@ -8,7 +8,7 @@ use \TestSeparator\Handler\SeparateTestsHandler;
 use \TestSeparator\Handler\ServicesSeparateTestsFactory;
 use \TestSeparator\Handler\ConfigurationFactory;
 
-require __DIR__ . '/vendor/autoload.php';
+require 'vendor/autoload.php';
 
 $application = new Application();
 
