@@ -42,7 +42,7 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
                 $testName                    = $matches[1];
                 $timeExecuting               = (int) (((float) $testChild->attributes()->time) * 1000);
                 $testFilePath                = (string) $testChild->attributes()->file;
-                $relativeTestFilePath        = preg_replace('/^(.+)tests\//', '', $testFilePath);
+                $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
                 $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
 
                 $results[] = new ItemTestInfo(

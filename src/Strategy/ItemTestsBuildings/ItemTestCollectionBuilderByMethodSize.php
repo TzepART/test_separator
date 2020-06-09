@@ -43,8 +43,8 @@ class ItemTestCollectionBuilderByMethodSize extends AbstractItemTestCollectionBu
                 preg_match_all('/public function (test[^(]+)[^{]+\{([^{]+)}/', file_get_contents($testFilePath), $matches);
 
                 if (isset($matches[1]) && is_array($matches[1])) {
-                    $relativeTestFilePath        = preg_replace('/^(.+)tests\//', '', $testFilePath);
-                    $relativeParentDirectoryPath = preg_replace('/^(.+)tests\//', '', $filePath->getPath()) . '/';
+                    $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
+                    $relativeParentDirectoryPath = preg_replace('/^.+tests\//', 'tests/', $filePath->getPath()) . '/';
                     foreach ($matches[1] as $testNumber => $testName) {
                         $testSize  = $matches[2][$testNumber] ? strlen($matches[2][$testNumber]) : 0;
                         $results[] = new ItemTestInfo(
