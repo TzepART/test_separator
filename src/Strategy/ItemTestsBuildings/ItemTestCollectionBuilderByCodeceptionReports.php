@@ -5,6 +5,7 @@ namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use TestSeparator\Model\ItemTestInfo;
 use TestSeparator\Service\FileSystemHelper;
+use \SimpleXMLElement;
 
 class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestCollectionBuilder
 {
@@ -33,25 +34,29 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
         $filePaths = FileSystemHelper::getFilePathsByDirectory($this->codeceptionReportDir);
 
         $results = [];
+        $count = 0;
         foreach ($filePaths as $filePath) {
             //TODO add catching if xml is Invalid
-            $xml = simplexml_load_string(file_get_contents($filePath));
+            $xml = new SimpleXMLElement(file_get_contents($filePath));
 
-            foreach ($xml->{'testsuite'}->children() as $testChild) {
-                preg_match('/([^ ]+)/', (string) $testChild->attributes()->name, $matches);
-                $testName                    = $matches[1];
-                $timeExecuting               = (int) (((float) $testChild->attributes()->time) * 1000);
-                $testFilePath                = (string) $testChild->attributes()->file;
-                $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
-                $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
+            foreach ($xml->testsuite as $suiteChild) {
+                foreach ($suiteChild->testcase as $testChild) {
+                    preg_match('/([^ ]+)/', (string) $testChild['name'], $matches);
+                    $testName                    = $matches[1];
+                    $timeExecuting               = (int) (((float) $testChild['time']) * 1000);
+                    $testFilePath                = (string) $testChild['file'];
+                    $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
+                    $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
 
-                $results[] = new ItemTestInfo(
-                    $relativeParentDirectoryPath,
-                    $testFilePath,
-                    $relativeTestFilePath,
-                    $testName,
-                    $timeExecuting
-                );
+                    $results[] = new ItemTestInfo(
+                        $relativeParentDirectoryPath,
+                        $testFilePath,
+                        $relativeTestFilePath,
+                        $testName,
+                        $timeExecuting
+                    );
+                    $count++;
+                }
             }
         }
 
