@@ -22,6 +22,7 @@ Add your configuration to config.json
 
 ### Configuration
 
+Add configuration file `config/test_separator.yml`, which contents:
 ```yaml
 test_separator:
   separating-strategy: 'codeception-report'

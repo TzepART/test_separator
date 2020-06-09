@@ -14,7 +14,7 @@ $application = new Application();
 
 try {
     // TODO use standard symfony configuration
-    $configuration = ConfigurationFactory::makeConfiguration('config/packages/test_separator.yaml');
+    $configuration = ConfigurationFactory::makeConfiguration('config/test_separator.yml');
 
     $separateHandler = new SeparateTestsHandler(
         ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
