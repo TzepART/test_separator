@@ -21,7 +21,6 @@ composer require tzepart/test-separator
 Add your configuration to config.json
 
 ### Configuration
-Add configuration file `config/packages/test_separator.yaml`
 
 ```yaml
 test_separator:
