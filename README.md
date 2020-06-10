@@ -18,8 +18,6 @@ Than smaller the division unit (method < class < directory) that more optimized 
 composer require tzepart/test-separator
 ```
 
-Add your configuration to config.json
-
 ### Configuration
 
 Add configuration file `config/test_separator.yml`, which contents:
