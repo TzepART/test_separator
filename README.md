@@ -24,7 +24,6 @@ Add configuration file `config/test_separator.yml`, which contents:
 test_separator:
   separating-strategy: 'codeception-report'
   use-default-separating-strategy: false
-  allure-reports-directory: '/path/to/file/with/allure/reports/directory/'
   codeception-reports-directory: '/path/to/file/with/codeception/test/'
   tests-directory: '/path/to/project/tests/'
   result-path: '/path/to/project/file/groups/'
