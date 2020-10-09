@@ -36,18 +36,6 @@ class GroupBlockInfo
     }
 
     /**
-     * @param float $time
-     *
-     * @return $this
-     */
-    public function increaseSumm(float $time): self
-    {
-        $this->summTime += $time;
-
-        return $this;
-    }
-
-    /**
      * @param float $summTime
      *
      * @return $this
@@ -70,7 +58,7 @@ class GroupBlockInfo
     public function asArray(): array
     {
         return [
-            'dir_time'  => $this->dirTimes,
+            'dir_time' => $this->dirTimes,
             'summ_time' => $this->summTime,
         ];
     }

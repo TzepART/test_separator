@@ -13,7 +13,7 @@ class ConfigurationFactory
 {
     public static function makeConfiguration(string $configPath): Configuration
     {
-        $config        = self::configurationFileValidate($configPath);
+        $config = self::configurationFileValidate($configPath);
         $configuration = new Configuration($config);
 
         (new ConfigurationValidator($configuration))->validate();

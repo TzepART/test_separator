@@ -34,7 +34,7 @@ class FileSystemHelper
 
     public static function getFilePathsByDirectory(string $workDir): array
     {
-        $files     = scandir($workDir);
+        $files = scandir($workDir);
         $filePaths = [];
         foreach ($files as $file) {
             $filePath = $workDir . $file;

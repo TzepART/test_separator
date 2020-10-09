@@ -8,32 +8,30 @@ use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByMethodS
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByCodeceptionReports;
-use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByAllureReports;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 
 class ServicesSeparateTestsFactory
 {
-    public const CODECEPTION_SEPARATING_STRATEGY    = 'codeception-report';
-    public const ALLURE_REPORTS_SEPARATING_STRATEGY = 'allure-report';
-    public const METHOD_SIZE_SEPARATING_STRATEGY    = 'method-size';
+    public const CODECEPTION_SEPARATING_STRATEGY = 'codeception-report';
+    public const METHOD_SIZE_SEPARATING_STRATEGY = 'method-size';
 
     public const DIRECTORY_LEVEL = 'directory';
-    public const CLASS_LEVEL     = 'class';
-    public const METHOD_LEVEL    = 'method';
+    public const CLASS_LEVEL = 'class';
+    public const METHOD_LEVEL = 'method';
 
     public static function makeLevelDeepService(string $serviceName): DepthLevelStrategyInterface
     {
-        if($serviceName === self::DIRECTORY_LEVEL){
+        if ($serviceName === self::DIRECTORY_LEVEL) {
             return new DepthDirectoryLevelStrategy();
         }
 
-        if($serviceName === self::CLASS_LEVEL){
+        if ($serviceName === self::CLASS_LEVEL) {
             return new DepthClassLevelStrategy();
         }
 
-        if($serviceName === self::METHOD_LEVEL){
+        if ($serviceName === self::METHOD_LEVEL) {
             return new DepthMethodLevelStrategy();
         }
 
@@ -42,22 +40,14 @@ class ServicesSeparateTestsFactory
 
     public static function makeTestFilePathHelper(Configuration $configuration): ItemTestCollectionBuilderInterface
     {
-        if($configuration->getSeparatingStrategy() === self::CODECEPTION_SEPARATING_STRATEGY){
+        if ($configuration->getSeparatingStrategy() === self::CODECEPTION_SEPARATING_STRATEGY) {
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getCodeceptionReportsDir()
             );
         }
 
-        if($configuration->getSeparatingStrategy() === self::ALLURE_REPORTS_SEPARATING_STRATEGY){
-            return new ItemTestCollectionBuilderByAllureReports(
-                $configuration->getTestsDirectory(),
-                $configuration->getAllureReportsDirectory(),
-                $configuration->getTestSuitesDirectories()
-            );
-        }
-
-        if($configuration->getSeparatingStrategy() === self::METHOD_SIZE_SEPARATING_STRATEGY){
+        if ($configuration->getSeparatingStrategy() === self::METHOD_SIZE_SEPARATING_STRATEGY) {
             return new ItemTestCollectionBuilderByMethodSize(
                 $configuration->getTestsDirectory(),
                 $configuration->getTestSuitesDirectories()
