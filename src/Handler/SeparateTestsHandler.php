@@ -57,15 +57,19 @@ class SeparateTestsHandler
      * @param int $countSuit
      *
      * @return array
+     * TODO add test
      */
     public function separateDirectoriesByTime(array $timeResults, int $countSuit): array
     {
+        $timeResults = $this->updateForUniqueValues($timeResults);
+
         $greedy = new Greedy();
         $greedy->setData($timeResults);
         $greedy->setSize($countSuit);
         $result = $greedy->getResult();
 
         $groupBlockInfoItems = [];
+
         foreach ($result as $key => $block) {
             $groupBlockInfo = new GroupBlockInfo();
             foreach ($block as $time) {
@@ -87,5 +91,18 @@ class SeparateTestsHandler
     public function getGroupDirectoryPath(): string
     {
         return $this->resultPath;
+    }
+
+    private function updateForUniqueValues(array $timeResults): array
+    {
+        $updateValues = [];
+        $initValue = 0.000001;
+        $multiplier = 1;
+        foreach ($timeResults as $key => $timeResult) {
+            $updateValues[$key] = $timeResult + $initValue * $multiplier;
+            $multiplier++;
+        }
+
+        return $updateValues;
     }
 }
