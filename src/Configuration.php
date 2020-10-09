@@ -18,11 +18,6 @@ class Configuration
     /**
      * @var string
      */
-    private $allureReportsDirectory;
-
-    /**
-     * @var string
-     */
     private $codeceptionReportsDir;
 
     /**
@@ -54,7 +49,6 @@ class Configuration
     {
         $this->separatingStrategy           = $config['separating-strategy'] ?? '';
         $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? false;
-        $this->allureReportsDirectory       = $config['allure-reports-directory'] ?? '';
         $this->codeceptionReportsDir        = $config['codeception-reports-directory'] ?? '';
         $this->testsDirectory               = $config['tests-directory'] ?? '';
         $this->resultPath                   = $config['result-path'] ?? '';
@@ -85,14 +79,6 @@ class Configuration
     public function isUseDefaultSeparatingStrategy(): bool
     {
         return $this->useDefaultSeparatingStrategy;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAllureReportsDirectory(): string
-    {
-        return $this->allureReportsDirectory;
     }
 
     /**

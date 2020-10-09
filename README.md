@@ -3,8 +3,7 @@
 ## Description:
 It is possible to divide the tests into groups based on:
 1. report.xml of [Codeception](https://codeception.com/) library
-2. Allure reports of [Yandex/Allure](https://github.com/allure-framework/allure-codeception) librariy
-3. The size of the test methods (used if the first 2 do not work)
+1. The size of the test methods (used if the first 2 do not work)
 
 In addition, the separation depth has 3 levels:
 1. Separation of directories
@@ -39,10 +38,9 @@ test_separator:
 
 Parameter **separating-strategy** can be one of these values:
 * codeception-report
-* allure-report
 * method-size
 
-If parameter **use-default-separating-strategy: true** than, if we can't use **codeception-report** strategy or **allure-report** we'll try use default strategy (**method-size**)
+If parameter **use-default-separating-strategy: true** than, if we can't use **codeception-report** strategy we'll try use default strategy (**method-size**)
 
 Parameter **tests-directory** - path to directory where is yours tests
 

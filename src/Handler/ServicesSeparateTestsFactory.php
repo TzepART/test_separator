@@ -8,7 +8,6 @@ use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByMethodS
 use TestSeparator\Strategy\SeparationDepth\DepthDirectoryLevelStrategy;
 use TestSeparator\Strategy\SeparationDepth\DepthClassLevelStrategy;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByCodeceptionReports;
-use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderByAllureReports;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
@@ -16,7 +15,6 @@ use TestSeparator\Strategy\SeparationDepth\DepthMethodLevelStrategy;
 class ServicesSeparateTestsFactory
 {
     public const CODECEPTION_SEPARATING_STRATEGY    = 'codeception-report';
-    public const ALLURE_REPORTS_SEPARATING_STRATEGY = 'allure-report';
     public const METHOD_SIZE_SEPARATING_STRATEGY    = 'method-size';
 
     public const DIRECTORY_LEVEL = 'directory';
@@ -46,14 +44,6 @@ class ServicesSeparateTestsFactory
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
                 $configuration->getCodeceptionReportsDir()
-            );
-        }
-
-        if($configuration->getSeparatingStrategy() === self::ALLURE_REPORTS_SEPARATING_STRATEGY){
-            return new ItemTestCollectionBuilderByAllureReports(
-                $configuration->getTestsDirectory(),
-                $configuration->getAllureReportsDirectory(),
-                $configuration->getTestSuitesDirectories()
             );
         }
 
