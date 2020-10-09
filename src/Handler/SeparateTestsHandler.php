@@ -35,10 +35,11 @@ class SeparateTestsHandler
         ItemTestCollectionBuilderInterface $fileSystemHelper,
         DepthLevelStrategyInterface $timeCounterStrategy,
         string $resultPath
-    ) {
-        $this->fileSystemHelper    = $fileSystemHelper;
+    )
+    {
+        $this->fileSystemHelper = $fileSystemHelper;
         $this->timeCounterStrategy = $timeCounterStrategy;
-        $this->resultPath          = $resultPath;
+        $this->resultPath = $resultPath;
     }
 
     public function buildTestInfoCollection(): array

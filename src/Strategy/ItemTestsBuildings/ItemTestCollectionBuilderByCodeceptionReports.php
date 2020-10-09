@@ -40,11 +40,11 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
 
             foreach ($xml->testsuite as $suiteChild) {
                 foreach ($suiteChild->testcase as $testChild) {
-                    preg_match('/([^ ]+)/', (string) $testChild['name'], $matches);
-                    $testName                    = $matches[1];
-                    $timeExecuting               = (int) (((float) $testChild['time']) * 1000);
-                    $testFilePath                = (string) $testChild['file'];
-                    $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
+                    preg_match('/([^ ]+)/', (string)$testChild['name'], $matches);
+                    $testName = $matches[1];
+                    $timeExecuting = (int)(((float)$testChild['time']) * 1000);
+                    $testFilePath = (string)$testChild['file'];
+                    $relativeTestFilePath = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
                     $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
 
                     $results[] = new ItemTestInfo(

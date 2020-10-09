@@ -27,13 +27,13 @@ class ConfigurationValidator
         ServicesSeparateTestsFactory::METHOD_LEVEL,
     ];
 
-    private const NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT              = 'Not available depth level was got.';
-    private const PATH_TO_TESTS_DIRECTORY_IS_INVALID             = 'Path to tests directory is Invalid.';
-    private const PATH_TO_RESULTS_DIRECTORY_IS_INVALID           = 'Path to results directory is Invalid.';
-    private const THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY      = 'There was got unknown separating strategy.';
-    private const TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY   = 'Tests suites directories Collection is empty.';
+    private const NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT = 'Not available depth level was got.';
+    private const PATH_TO_TESTS_DIRECTORY_IS_INVALID = 'Path to tests directory is Invalid.';
+    private const PATH_TO_RESULTS_DIRECTORY_IS_INVALID = 'Path to results directory is Invalid.';
+    private const THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY = 'There was got unknown separating strategy.';
+    private const TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY = 'Tests suites directories Collection is empty.';
     private const PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Path to Codeception Reports directory is empty.';
-    private const CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY         = 'Codeception Reports directory is empty.';
+    private const CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Codeception Reports directory is empty.';
 
 
     /**

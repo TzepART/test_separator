@@ -19,7 +19,7 @@ class DepthMethodLevelStrategy implements DepthLevelStrategyInterface
         /** @var ItemTestInfo $testInfoItem */
         foreach ($testInfoItems as $testInfoItem) {
             $time = round(($testInfoItem->getTimeExecuting()) / 1000, 2);
-            $key  = $testInfoItem->getRelativeTestFilePath() . ':' . $testInfoItem->getTestName();
+            $key = $testInfoItem->getRelativeTestFilePath() . ':' . $testInfoItem->getTestName();
             if (isset($timeResults[$key])) {
                 $timeResults[$key] = round($timeResults[$key] + $time, 2);
             } else {

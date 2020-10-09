@@ -28,7 +28,7 @@ class ItemTestCollectionBuilderByMethodSize extends AbstractItemTestCollectionBu
     {
         parent::__construct($baseTestDirPath);
         $this->testSuitesDirectories = $testSuitesDirectories;
-        $this->fileFinder            = new Finder();
+        $this->fileFinder = new Finder();
     }
 
     public function buildTestInfoCollection(): array
@@ -43,10 +43,10 @@ class ItemTestCollectionBuilderByMethodSize extends AbstractItemTestCollectionBu
                 preg_match_all('/public function (test[^(]+)[^{]+\{([^{]+)}/', file_get_contents($testFilePath), $matches);
 
                 if (isset($matches[1]) && is_array($matches[1])) {
-                    $relativeTestFilePath        = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
+                    $relativeTestFilePath = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
                     $relativeParentDirectoryPath = preg_replace('/^.+tests\//', 'tests/', $filePath->getPath()) . '/';
                     foreach ($matches[1] as $testNumber => $testName) {
-                        $testSize  = $matches[2][$testNumber] ? strlen($matches[2][$testNumber]) : 0;
+                        $testSize = $matches[2][$testNumber] ? strlen($matches[2][$testNumber]) : 0;
                         $results[] = new ItemTestInfo(
                             $relativeParentDirectoryPath,
                             $testFilePath,

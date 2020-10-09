@@ -58,7 +58,7 @@ class SeparateTestsCommand extends Command
         // outputs multiple lines to the console (adding "\n" at the end of each line)
         $output->writeln('Separating started...');
 
-        $countSuit = (int) $input->getArgument('count_group');
+        $countSuit = (int)$input->getArgument('count_group');
 
         $this->separateTests($countSuit);
 
@@ -73,8 +73,8 @@ class SeparateTestsCommand extends Command
     private function separateTests(int $countSuit): void
     {
         $testInfoCollection = $this->separateTestsHandler->buildTestInfoCollection();
-        $entityWithTime     = $this->separateTestsHandler->groupTimeEntityWithCountedTime($testInfoCollection);
-        $arGroups           = $this->separateTestsHandler->separateDirectoriesByTime($entityWithTime, $countSuit);
+        $entityWithTime = $this->separateTestsHandler->groupTimeEntityWithCountedTime($testInfoCollection);
+        $arGroups = $this->separateTestsHandler->separateDirectoriesByTime($entityWithTime, $countSuit);
 
         // remove all group files
         $this->separateTestsHandler->removeAllGroupFiles();

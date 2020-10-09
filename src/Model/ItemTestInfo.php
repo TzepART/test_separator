@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace TestSeparator\Model;
-
 
 class ItemTestInfo
 {
@@ -48,29 +46,14 @@ class ItemTestInfo
         string $relativeTestFilePath,
         string $testName,
         int $timeExecuting
-    ) {
+    )
+    {
 
         $this->relativeParentDirectoryPath = $relativeParentDirectoryPath;
-        $this->testFilePath                = $testFilePath;
-        $this->relativeTestFilePath        = $relativeTestFilePath;
-        $this->testName                    = $testName;
-        $this->timeExecuting               = $timeExecuting;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRelativeParentDirectoryPath(): string
-    {
-        return $this->relativeParentDirectoryPath;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTestFilePath(): string
-    {
-        return $this->testFilePath;
+        $this->testFilePath = $testFilePath;
+        $this->relativeTestFilePath = $relativeTestFilePath;
+        $this->testName = $testName;
+        $this->timeExecuting = $timeExecuting;
     }
 
     /**
