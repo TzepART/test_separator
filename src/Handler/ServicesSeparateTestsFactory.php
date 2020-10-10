@@ -43,7 +43,8 @@ class ServicesSeparateTestsFactory
         if ($configuration->getSeparatingStrategy() === self::CODECEPTION_SEPARATING_STRATEGY) {
             return new ItemTestCollectionBuilderByCodeceptionReports(
                 $configuration->getTestsDirectory(),
-                $configuration->getCodeceptionReportsDir()
+                $configuration->getCodeceptionReportsDir(),
+                $configuration->getTestSuitesDirectories()
             );
         }
 
