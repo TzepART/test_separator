@@ -15,15 +15,24 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
     private $codeceptionReportDir;
 
     /**
+     * @var array
+     */
+    private $availableSuitesDirectories;
+
+    /**
      * ItemTestCollectionBuilderByCodeceptionReports constructor.
      *
      * @param string $baseTestDirPath
      * @param string $codeceptionReportDir
+     * @param array $testSuitesDirectories
      */
-    public function __construct(string $baseTestDirPath, string $codeceptionReportDir)
+    public function __construct(string $baseTestDirPath, string $codeceptionReportDir, array $testSuitesDirectories)
     {
         parent::__construct($baseTestDirPath);
         $this->codeceptionReportDir = $codeceptionReportDir;
+        $this->availableSuitesDirectories = array_map(function (string $shortPath) {
+            return 'tests/' . $shortPath.'/';
+        }, $testSuitesDirectories);;
     }
 
     /**
@@ -40,24 +49,37 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
 
             foreach ($xml->testsuite as $suiteChild) {
                 foreach ($suiteChild->testcase as $testChild) {
-                    preg_match('/([^ ]+)/', (string)$testChild['name'], $matches);
-                    $testName = $matches[1];
-                    $timeExecuting = (int)(((float)$testChild['time']) * 1000);
-                    $testFilePath = (string)$testChild['file'];
-                    $relativeTestFilePath = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
-                    $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
+                    $testFilePath = (string) $testChild['file'];
+                    if($this->checkDirectoryAvailable($testFilePath)){
+                        preg_match('/([^ ]+)/', (string) $testChild['name'], $matches);
+                        $testName = $matches[1];
+                        $timeExecuting = (int)(((float) $testChild['time']) * 1000);
+                        $relativeTestFilePath = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
+                        $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
 
-                    $results[] = new ItemTestInfo(
-                        $relativeParentDirectoryPath,
-                        $testFilePath,
-                        $relativeTestFilePath,
-                        $testName,
-                        $timeExecuting
-                    );
+                        $results[] = new ItemTestInfo(
+                            $relativeParentDirectoryPath,
+                            $testFilePath,
+                            $relativeTestFilePath,
+                            $testName,
+                            $timeExecuting
+                        );
+                    }
                 }
             }
         }
 
         return $results;
+    }
+
+    private function checkDirectoryAvailable(string $testFilePath): bool
+    {
+        foreach ($this->availableSuitesDirectories as $testSuitesDirectory) {
+            if(stripos($testFilePath, $testSuitesDirectory) > 0){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

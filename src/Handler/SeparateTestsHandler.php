@@ -14,7 +14,7 @@ class SeparateTestsHandler
     /**
      * @var ItemTestCollectionBuilderInterface
      */
-    private $fileSystemHelper;
+    private $itemTestCollectionBuilder;
 
     /**
      * @var DepthLevelStrategyInterface
@@ -27,24 +27,23 @@ class SeparateTestsHandler
     private $resultPath;
 
     /**
-     * @param ItemTestCollectionBuilderInterface $fileSystemHelper
+     * @param ItemTestCollectionBuilderInterface $itemTestCollectionBuilder
      * @param DepthLevelStrategyInterface $timeCounterStrategy
      * @param string $resultPath
      */
     public function __construct(
-        ItemTestCollectionBuilderInterface $fileSystemHelper,
+        ItemTestCollectionBuilderInterface $itemTestCollectionBuilder,
         DepthLevelStrategyInterface $timeCounterStrategy,
         string $resultPath
-    )
-    {
-        $this->fileSystemHelper = $fileSystemHelper;
+    ) {
+        $this->itemTestCollectionBuilder = $itemTestCollectionBuilder;
         $this->timeCounterStrategy = $timeCounterStrategy;
         $this->resultPath = $resultPath;
     }
 
     public function buildTestInfoCollection(): array
     {
-        return $this->fileSystemHelper->buildTestInfoCollection();
+        return $this->itemTestCollectionBuilder->buildTestInfoCollection();
     }
 
     public function groupTimeEntityWithCountedTime($testInfoItems): array
