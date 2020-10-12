@@ -62,7 +62,7 @@ class SeparateTestsCommand extends Command
 
         $this->separateTests($countSuit);
 
-        $output->writeln('Your test are separated!');
+        $output->writeln('Your tests are separated!');
 
         return 0;
     }

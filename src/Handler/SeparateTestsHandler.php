@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace TestSeparator\Handler;
 
 use drupol\phpartition\Algorithm\Greedy;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
@@ -12,12 +14,12 @@ use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 class SeparateTestsHandler
 {
     /**
-     * @var ItemTestCollectionBuilderInterface
+     * @var ItemTestCollectionBuilderInterface&LoggerAwareTrait
      */
     private $itemTestCollectionBuilder;
 
     /**
-     * @var DepthLevelStrategyInterface
+     * @var DepthLevelStrategyInterface&LoggerAwareTrait
      */
     private $timeCounterStrategy;
 
@@ -27,18 +29,29 @@ class SeparateTestsHandler
     private $resultPath;
 
     /**
-     * @param ItemTestCollectionBuilderInterface $itemTestCollectionBuilder
-     * @param DepthLevelStrategyInterface $timeCounterStrategy
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @param ItemTestCollectionBuilderInterface&LoggerAwareTrait $itemTestCollectionBuilder
+     * @param DepthLevelStrategyInterface&LoggerAwareTrait $timeCounterStrategy
      * @param string $resultPath
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ItemTestCollectionBuilderInterface $itemTestCollectionBuilder,
         DepthLevelStrategyInterface $timeCounterStrategy,
-        string $resultPath
-    ) {
+        string $resultPath,
+        LoggerInterface $logger
+    )
+    {
         $this->itemTestCollectionBuilder = $itemTestCollectionBuilder;
         $this->timeCounterStrategy = $timeCounterStrategy;
         $this->resultPath = $resultPath;
+        $this->logger = $logger;
+        $this->itemTestCollectionBuilder->setLogger($logger);
+        $this->timeCounterStrategy->setLogger($logger);
     }
 
     public function buildTestInfoCollection(): array

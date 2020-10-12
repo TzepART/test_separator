@@ -5,7 +5,6 @@ namespace TestSeparator\Strategy\ItemTestsBuildings;
 
 use TestSeparator\Model\ItemTestInfo;
 use TestSeparator\Service\FileSystemHelper;
-use \SimpleXMLElement;
 
 class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestCollectionBuilder
 {
@@ -32,7 +31,7 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
         $this->codeceptionReportDir = $codeceptionReportDir;
         $this->availableSuitesDirectories = array_map(function (string $shortPath) {
             return 'tests/' . $shortPath.'/';
-        }, $testSuitesDirectories);;
+        }, $testSuitesDirectories);
     }
 
     /**
@@ -44,8 +43,11 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
 
         $results = [];
         foreach ($filePaths as $filePath) {
-            //TODO add catching if xml is Invalid
-            $xml = new SimpleXMLElement(file_get_contents($filePath));
+            $xml = simplexml_load_string(file_get_contents($filePath));
+            if (!$xml) {
+                $this->logger->notice(sprintf('File %s could not be parsed as XML.', $filePath));
+                continue;
+            }
 
             foreach ($xml->testsuite as $suiteChild) {
                 foreach ($suiteChild->testcase as $testChild) {

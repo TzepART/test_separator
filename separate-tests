@@ -7,6 +7,7 @@ use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\SeparateTestsHandler;
 use \TestSeparator\Handler\ServicesSeparateTestsFactory;
 use \TestSeparator\Handler\ConfigurationFactory;
+use TestSeparator\Service\Logger;
 
 require 'vendor/autoload.php';
 
@@ -16,10 +17,12 @@ try {
     // TODO use standard symfony configuration
     $configuration = ConfigurationFactory::makeConfiguration('config/test_separator.yml');
 
+    $logger = new Logger();
     $separateHandler = new SeparateTestsHandler(
         ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
         ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
-        $configuration->getResultPath()
+        $configuration->getResultPath(),
+        $logger
     );
 
     $application->add(new SeparateTestsCommand($separateHandler, 'separate'));
