@@ -9,6 +9,6 @@ class Logger extends AbstractLogger
 {
     public function log($level, $message, array $context = array())
     {
-        printf('%s: %s'.PHP_EOL, $level, $message);
+        printf('%s: %s' . PHP_EOL, $level, $message);
     }
 }

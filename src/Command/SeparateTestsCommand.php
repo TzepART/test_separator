@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TestSeparator\Exception\ValidationOfConfigurationException;
 use TestSeparator\Handler\SeparateTestsHandler;
 use TestSeparator\Model\GroupBlockInfo;
 
@@ -97,13 +96,13 @@ class SeparateTestsCommand extends Command
                 file_put_contents($filePath, $localTestsDir . PHP_EOL, FILE_APPEND);
             }
 
-            if(file_exists($filePath)){
-                if(!filesize($filePath)){
+            if (file_exists($filePath)) {
+                if (!filesize($filePath)) {
                     $this->logger->info(sprintf('File for %s is empty.', $groupName));
-                }else{
+                } else {
                     $this->logger->info(sprintf('File for %s was created successfully.', $groupName));
                 }
-            }else{
+            } else {
                 $this->logger->notice(sprintf('File for %s doesn\'t exist.', $groupName));
             }
         }

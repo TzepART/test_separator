@@ -30,7 +30,7 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
         parent::__construct($baseTestDirPath);
         $this->codeceptionReportDir = $codeceptionReportDir;
         $this->availableSuitesDirectories = array_map(function (string $shortPath) {
-            return 'tests/' . $shortPath.'/';
+            return 'tests/' . $shortPath . '/';
         }, $testSuitesDirectories);
     }
 
@@ -53,11 +53,11 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
 
             foreach ($xml->testsuite as $suiteChild) {
                 foreach ($suiteChild->testcase as $testChild) {
-                    $testFilePath = (string) $testChild['file'];
-                    if($this->checkDirectoryAvailable($testFilePath)){
-                        preg_match('/([^ ]+)/', (string) $testChild['name'], $matches);
+                    $testFilePath = (string)$testChild['file'];
+                    if ($this->checkDirectoryAvailable($testFilePath)) {
+                        preg_match('/([^ ]+)/', (string)$testChild['name'], $matches);
                         $testName = $matches[1];
-                        $timeExecuting = (int)(((float) $testChild['time']) * 1000);
+                        $timeExecuting = (int)(((float)$testChild['time']) * 1000);
                         $relativeTestFilePath = preg_replace('/^.+tests\//', 'tests/', $testFilePath);
                         $relativeParentDirectoryPath = preg_replace('/[A-z0-9]+\.php$/', '', $relativeTestFilePath);
 
@@ -79,7 +79,7 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
     private function checkDirectoryAvailable(string $testFilePath): bool
     {
         foreach ($this->availableSuitesDirectories as $testSuitesDirectory) {
-            if(stripos($testFilePath, $testSuitesDirectory) > 0){
+            if (stripos($testFilePath, $testSuitesDirectory) > 0) {
                 return true;
             }
         }
