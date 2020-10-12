@@ -3,12 +3,22 @@ declare(strict_types=1);
 
 namespace TestSeparator\Strategy\ItemTestsBuildings;
 
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+
 abstract class AbstractItemTestCollectionBuilder implements ItemTestCollectionBuilderInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var string
      */
     private $baseTestDirPath;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * AbstractItemTestCollectionBuilder constructor.

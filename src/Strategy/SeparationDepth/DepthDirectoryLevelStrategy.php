@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace TestSeparator\Strategy\SeparationDepth;
 
+use Psr\Log\LoggerAwareTrait;
 use TestSeparator\Model\ItemTestInfo;
 
 class DepthDirectoryLevelStrategy implements DepthLevelStrategyInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @param ItemTestInfo[]|array $testInfoItems
      *
