@@ -56,11 +56,13 @@ class SeparateTestsHandler
 
     public function buildTestInfoCollection(): array
     {
+        $this->logger->info(sprintf('ItemTestCollectionBuilder - %s', get_class($this->itemTestCollectionBuilder)));
         return $this->itemTestCollectionBuilder->buildTestInfoCollection();
     }
 
     public function groupTimeEntityWithCountedTime($testInfoItems): array
     {
+        $this->logger->info(sprintf('DepthLevelStrategy - %s', get_class($this->timeCounterStrategy)));
         return $this->timeCounterStrategy->groupTimeEntityWithCountedTime($testInfoItems);
     }
 
@@ -82,14 +84,19 @@ class SeparateTestsHandler
 
         $groupBlockInfoItems = [];
 
+        $blockNumber = 0;
         foreach ($result as $key => $block) {
             $groupBlockInfo = new GroupBlockInfo();
             foreach ($block as $time) {
                 $keyDir = array_search($time, $timeResults, true);
                 $groupBlockInfo->addDirTime($keyDir, $time);
             }
+
             $groupBlockInfo->setSummTime(array_sum($block));
-            $groupBlockInfoItems[] = $groupBlockInfo;
+            $groupBlockInfoItems[$blockNumber] = $groupBlockInfo;
+
+            $this->logger->info(sprintf('Block %d: summ time - %f; count items - %d;', $blockNumber, $groupBlockInfo->getSummTime(), count($block)));
+            $blockNumber++;
         }
 
         return $groupBlockInfoItems;

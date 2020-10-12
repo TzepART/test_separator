@@ -43,6 +43,8 @@ class ItemTestCollectionBuilderByCodeceptionReports extends AbstractItemTestColl
 
         $results = [];
         foreach ($filePaths as $filePath) {
+            $this->logger->info(sprintf('File %s is processed.', $filePath));
+
             $xml = simplexml_load_string(file_get_contents($filePath));
             if (!$xml) {
                 $this->logger->notice(sprintf('File %s could not be parsed as XML.', $filePath));

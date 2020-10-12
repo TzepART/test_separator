@@ -13,11 +13,12 @@ require 'vendor/autoload.php';
 
 $application = new Application();
 
+$logger = new Logger();
+
 try {
     // TODO use standard symfony configuration
     $configuration = ConfigurationFactory::makeConfiguration('config/test_separator.yml');
 
-    $logger = new Logger();
     $separateHandler = new SeparateTestsHandler(
         ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
         ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
@@ -25,9 +26,9 @@ try {
         $logger
     );
 
-    $application->add(new SeparateTestsCommand($separateHandler, 'separate'));
+    $application->add(new SeparateTestsCommand($separateHandler, $logger, 'separate'));
 
     $application->run();
 } catch (Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+    $logger->error($e->getMessage());
 }

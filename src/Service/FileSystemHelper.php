@@ -12,7 +12,7 @@ class FileSystemHelper
                     array_filter(
                         scandir($directoryPath),
                         static function (string $fileName) {
-                            return !in_array($fileName, ['.', '..']);
+                            return !in_array($fileName, ['.', '..', '.gitkeep']);
                         }
                     )
                 ) > 0;
