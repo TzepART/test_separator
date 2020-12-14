@@ -60,5 +60,5 @@ Where "6" - groups count
 ## Develop section
 Run test
 ```
-./vendor/bin/phpunit --bootstrap vendor/autoload.php
+./vendor/bin/phpunit --bootstrap vendor/autoload.php tests
 ``` 

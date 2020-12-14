@@ -11,12 +11,10 @@ use TestSeparator\Service\ConfigurationValidator;
 
 class ConfigurationFactory
 {
-    public static function makeConfiguration(string $configPath): Configuration
+    public static function makeConfiguration(array $config, ConfigurationValidator $validator): Configuration
     {
-        $config = self::configurationFileValidate($configPath);
         $configuration = new Configuration($config);
-
-        (new ConfigurationValidator($configuration))->validate();
+        $validator->validate($configuration);
 
         return $configuration;
     }
@@ -28,7 +26,7 @@ class ConfigurationFactory
      *
      * @throws ConfigurationFileDoesNotExist|ErrorWhileParsingConfigurationFile
      */
-    private static function configurationFileValidate(string $configPath): array
+    public static function makeConfigurationArrayByFile(string $configPath): array
     {
         if (!file_exists($configPath)) {
             throw new ConfigurationFileDoesNotExist(ConfigurationFileDoesNotExist::MESSAGE);

@@ -66,7 +66,7 @@ class SeparateTestsCommand extends Command
         // outputs multiple lines to the console (adding "\n" at the end of each line)
         $output->writeln('Separating started...');
 
-        $countSuit = (int)$input->getArgument('count_group');
+        $countSuit = (int) $input->getArgument('count_group');
 
         $this->separateTests($countSuit);
 

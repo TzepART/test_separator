@@ -44,6 +44,8 @@ class Configuration
      * Configuration constructor.
      *
      * @param array $config
+     *
+     * TODO Checking of fields types
      */
     public function __construct(array $config)
     {
