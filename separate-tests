@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
-use \TestSeparator\Handler\SeparateTestsHandler;
-use \TestSeparator\Handler\ServicesSeparateTestsFactory;
+use \TestSeparator\Handler\TestsSeparatorFactory;
 use \TestSeparator\Handler\ConfigurationFactory;
 use \TestSeparator\Service\ConfigurationValidator;
 use TestSeparator\Service\Logger;
@@ -21,14 +20,9 @@ try {
     $configArray = ConfigurationFactory::makeConfigurationArrayByFile('config/test_separator.yml');
     $configuration = ConfigurationFactory::makeConfiguration($configArray, new ConfigurationValidator());
 
-    $separateHandler = new SeparateTestsHandler(
-        ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
-        ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
-        $configuration->getResultPath(),
-        $logger
-    );
+    $testsSeparator = TestsSeparatorFactory::makeTestsSeparator($configuration, $logger);
 
-    $application->add(new SeparateTestsCommand($separateHandler, $logger, 'separate'));
+    $application->add(new SeparateTestsCommand($testsSeparator, 'separate'));
 
     $application->run();
 } catch (Exception $e) {
