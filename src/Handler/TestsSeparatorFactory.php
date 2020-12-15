@@ -10,13 +10,18 @@ class TestsSeparatorFactory
 {
     public static function makeTestsSeparator(Configuration $configuration, LoggerInterface $logger): TestsSeparatorInterface
     {
-        $separateHandler = new TestsSeparatorHandler(
+        if ($configuration->getSeparatingStrategy() === ServicesSeparateTestsFactory::DEFAULT_GROUP_STRATEGY) {
+            return new LazyTestSeparatorHandler(
+                $configuration,
+                $logger
+            );
+        }
+
+        return new TestsSeparatorHandler(
             ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
             ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
             $configuration->getResultPath(),
             $logger
         );
-
-        return $separateHandler;
     }
 }
