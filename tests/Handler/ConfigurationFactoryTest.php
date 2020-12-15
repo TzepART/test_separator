@@ -93,6 +93,7 @@ class ConfigurationFactoryTest extends TestCase
         $this->assertEquals($expectedFieldValues['depthLevel'], $configuration->getDepthLevel());
         $this->assertEquals($expectedFieldValues['testSuitesDirectories'], $configuration->getTestSuitesDirectories());
         $this->assertEquals($expectedFieldValues['defaultSeparatingStrategies'], $configuration->getDefaultSeparatingStrategies());
+        $this->assertEquals($expectedFieldValues['defaultGroupsDir'], $configuration->getDefaultGroupsDir());
     }
 
     public function dataMakeConfigurationOk(): iterable
@@ -114,7 +115,8 @@ class ConfigurationFactoryTest extends TestCase
                 ],
                 'defaultSeparatingStrategies' => [
                     'method-size',
-                ]
+                ],
+                'defaultGroupsDir' => '/path/to/directory/with/defaults/groups/'
             ]
         ];
     }

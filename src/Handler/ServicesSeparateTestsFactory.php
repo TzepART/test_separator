@@ -16,6 +16,7 @@ class ServicesSeparateTestsFactory
 {
     public const CODECEPTION_SEPARATING_STRATEGY = 'codeception-report';
     public const METHOD_SIZE_SEPARATING_STRATEGY = 'method-size';
+    public const DEFAULT_GROUP_STRATEGY = 'default-groups';
 
     public const DIRECTORY_LEVEL = 'directory';
     public const CLASS_LEVEL = 'class';

@@ -12,6 +12,7 @@ use TestSeparator\Exception\InvalidPathToResultDirectoryException;
 use TestSeparator\Exception\InvalidPathToTestsDirectoryException;
 use TestSeparator\Exception\NotAvailableDepthLevelException;
 use TestSeparator\Exception\Strategy\PathToCodeceptionReportsDirIsEmptyException;
+use TestSeparator\Exception\Strategy\PathToDefaultGroupsIsEmptyException;
 use TestSeparator\Exception\Strategy\SuitesDirectoriesCollectionIsEmptyException;
 use TestSeparator\Exception\Strategy\ValidationOfStrategyConfigurationException;
 use TestSeparator\Exception\UnknownSeparatingStrategyException;
@@ -26,6 +27,7 @@ class ConfigurationValidator
 
     private const AVAILABLE_DEFAULT_SEPARATING_STRATEGIES = [
         ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY,
+        ServicesSeparateTestsFactory::DEFAULT_GROUP_STRATEGY,
     ];
 
     private const AVAILABLE_DEPTH_LEVELS = [
@@ -42,23 +44,20 @@ class ConfigurationValidator
     private const PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Path to Codeception Reports directory is empty.';
     private const CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Codeception Reports directory is empty.';
     private const DEFAULT_SEPARATING_STRATEGIES_NOT_FOUND_OR_EMPTY = 'Default separating strategies not found or empty';
-    private const THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY = 'There was got unknown default separating strategy.';
+    private const THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY = 'There was got unknown default separating strategy - %s.';
     private const ALL_DEFAULT_SEPARATING_STRATEGIES_ARE_INVALID = 'All Default Separating Strategies are invalid';
+    private const PATH_TO_DEFAULT_GROUPS_IS_EMPTY = 'Path to Default Groups is empty';
+    private const DEFAULT_GROUPS_DIRECTORY_IS_EMPTY = 'Default groups directory is empty.';
 
     /**
      * @var LoggerInterface
      */
     private $logger;
 
-    /**
-     * ConfigurationValidator constructor.
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
-
 
     public function validate(Configuration $configuration): bool
     {
@@ -90,7 +89,14 @@ class ConfigurationValidator
                         $configuration->setSeparatingStrategy($defaultSeparatingStrategy);
                         break;
                     } catch (ValidationOfStrategyConfigurationException $e) {
-                        $this->logger->notice(sprintf('Default strategy %s is invalid', $defaultSeparatingStrategy));
+                        $this->logger->notice(
+                            sprintf(
+                                'Default strategy %s is invalid. With Exception - %s. Message: %s',
+                                $defaultSeparatingStrategy,
+                                get_class($e),
+                                $e->getMessage()
+                            )
+                        );
                     }
                 }
 
@@ -105,10 +111,6 @@ class ConfigurationValidator
         return true;
     }
 
-    /**
-     * @param string $separatingStrategy
-     * @param Configuration $configuration
-     */
     private function validateStrategy(string $separatingStrategy, Configuration $configuration): void
     {
         if (!in_array($separatingStrategy, self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
@@ -117,29 +119,28 @@ class ConfigurationValidator
 
         if ($separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
             $this->validateMethodSizeStrategy($configuration);
-        } elseif ($separatingStrategy === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
+        }
+
+        if ($separatingStrategy === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
             $this->validateCodeceptionSeparatingStrategy($configuration);
         }
     }
 
-    /**
-     * @param string $separatingStrategy
-     * @param Configuration $configuration
-     */
     private function validateDefaultStrategy(string $separatingStrategy, Configuration $configuration): void
     {
         if (!in_array($separatingStrategy, self::AVAILABLE_DEFAULT_SEPARATING_STRATEGIES, true)) {
-            throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY);
+            throw new UnknownSeparatingStrategyException(sprintf(self::THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY, $separatingStrategy));
         }
 
         if ($separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
             $this->validateMethodSizeStrategy($configuration);
         }
+
+        if ($separatingStrategy === ServicesSeparateTestsFactory::DEFAULT_GROUP_STRATEGY) {
+            $this->validateDefaultGroupStrategy($configuration);
+        }
     }
 
-    /**
-     * @param Configuration $configuration
-     */
     private function validateMethodSizeStrategy(Configuration $configuration): void
     {
         if (count($configuration->getTestSuitesDirectories()) === 0) {
@@ -148,9 +149,6 @@ class ConfigurationValidator
         //TODO add validation that all Tests Suites Directories contain tests (?)
     }
 
-    /**
-     * @param Configuration $configuration
-     */
     private function validateCodeceptionSeparatingStrategy(Configuration $configuration): void
     {
         if ($configuration->getCodeceptionReportsDir() === '') {
@@ -159,6 +157,17 @@ class ConfigurationValidator
 
         if (!FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())) {
             throw new CodeceptionReportsDirIsEmptyException(self::CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
+        }
+    }
+
+    private function validateDefaultGroupStrategy(Configuration $configuration): void
+    {
+        if ($configuration->getDefaultGroupsDir() === '') {
+            throw new PathToDefaultGroupsIsEmptyException(self::PATH_TO_DEFAULT_GROUPS_IS_EMPTY);
+        }
+
+        if (!FileSystemHelper::checkFilesInDir($configuration->getDefaultGroupsDir())) {
+            throw new CodeceptionReportsDirIsEmptyException(self::DEFAULT_GROUPS_DIRECTORY_IS_EMPTY);
         }
     }
 }

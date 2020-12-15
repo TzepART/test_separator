@@ -46,6 +46,11 @@ class Configuration
     private $defaultSeparatingStrategies;
 
     /**
+     * @var string
+     */
+    private $defaultGroupsDir;
+
+    /**
      * Configuration constructor.
      *
      * @param array $config
@@ -62,6 +67,7 @@ class Configuration
         $this->depthLevel = $config['level'] ?? '';
         $this->testSuitesDirectories = $config['test-suites-directories'] ?? [];
         $this->defaultSeparatingStrategies = $config['default-separating-strategies'] ?? [];
+        $this->defaultGroupsDir = $config['default-groups-directory'] ?? '';
     }
 
 
@@ -135,5 +141,13 @@ class Configuration
     public function getDefaultSeparatingStrategies(): array
     {
         return $this->defaultSeparatingStrategies;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultGroupsDir(): string
+    {
+        return $this->defaultGroupsDir;
     }
 }

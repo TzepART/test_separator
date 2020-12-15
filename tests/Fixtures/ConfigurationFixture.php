@@ -20,7 +20,8 @@ class ConfigurationFixture
             ],
             'default-separating-strategies' => [
                 'method-size',
-            ]
+            ],
+            'default-groups-directory' => '',
         ];
     }
 
@@ -41,7 +42,8 @@ class ConfigurationFixture
             ],
             'default-separating-strategies' => [
                 'method-size',
-            ]
+            ],
+            'default-groups-directory' => '/path/to/directory/with/defaults/groups/',
         ];
     }
 }

@@ -33,6 +33,9 @@ test_separator:
       - 'sub-directories'
       - 'with'
       - 'test-suites'
+  default-separating-strategies:
+    - 'method-size'
+  default-groups-directory: '/path/to/directory/with/defaults/groups/'
 ```
 
 Parameter **separating-strategy** can be one of these values:

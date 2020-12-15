@@ -12,3 +12,5 @@ test_separator:
       - 'test-suites'
   default-separating-strategies:
     - 'method-size'
+    - 'default-groups'
+  default-groups-directory: '/path/to/directory/with/defaults/groups/'

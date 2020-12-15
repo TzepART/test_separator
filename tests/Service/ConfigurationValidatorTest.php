@@ -154,7 +154,20 @@ class ConfigurationValidatorTest extends TestCase
         yield 'There was got unknown default separating strategy.' => [
             'invalid Configuration' => new Configuration($invalidConfigurationArray9),
             'Expected Exception Class' => UnknownSeparatingStrategyException::class,
-            'Expected Exception Message' => 'There was got unknown default separating strategy.',
+            'Expected Exception Message' => 'There was got unknown default separating strategy - invalid_strategy.',
+        ];
+
+        $invalidConfigurationArray10 = $validConfigurationArray;
+        $invalidConfigurationArray10['test-suites-directories'] = [];
+        $invalidConfigurationArray10['default-separating-strategies'] = [
+            'method-size',
+            'default-groups',
+        ];
+
+        yield 'There was got unknown default separating strategy.' => [
+            'invalid Configuration' => new Configuration($invalidConfigurationArray10),
+            'Expected Exception Class' => AllDefaultSeparatingStrategiesAreInvalidException::class,
+            'Expected Exception Message' => 'All Default Separating Strategies are invalid',
         ];
     }
 
@@ -171,7 +184,8 @@ class ConfigurationValidatorTest extends TestCase
         string $expectedExceptionClass,
         string $expectedExceptionMessage,
         string $expectedLogMessage
-    ): void {
+    ): void
+    {
         $this->expectException($expectedExceptionClass);
         $this->expectExceptionMessage($expectedExceptionMessage);
         $this->logger->expects($this->once())
@@ -183,14 +197,39 @@ class ConfigurationValidatorTest extends TestCase
 
     public function dataValidateLoggerMessage()
     {
-        $invalidConfigurationArray = ConfigurationFixture::getValidConfigurationArray();
-        $invalidConfigurationArray['test-suites-directories'] = [];
+        $invalidConfigurationArray1 = ConfigurationFixture::getValidConfigurationArray();
+        $invalidConfigurationArray1['test-suites-directories'] = [];
 
-        yield 'All Default Separating Strategies are invalid' => [
-            'invalid Configuration' => new Configuration($invalidConfigurationArray),
+        yield 'All Default Strategies are invalid. Test suites directory is empty' => [
+            'invalid Configuration' => new Configuration($invalidConfigurationArray1),
             'Expected Exception Class' => AllDefaultSeparatingStrategiesAreInvalidException::class,
             'Expected Exception Message' => 'All Default Separating Strategies are invalid',
-            'Expected Logger Message' => 'Default strategy method-size is invalid',
+            'Expected Logger Message' => 'Default strategy method-size is invalid. With Exception - TestSeparator\Exception\Strategy\SuitesDirectoriesCollectionIsEmptyException. Message: Tests suites directories Collection is empty.',
+        ];
+
+        $invalidConfigurationArray2 = ConfigurationFixture::getValidConfigurationArray();
+        $invalidConfigurationArray2['default-separating-strategies'] = [
+            'default-groups',
+        ];
+
+        yield 'All Default Strategies are invalid. Path to Default Groups is empty' => [
+            'invalid Configuration' => new Configuration($invalidConfigurationArray2),
+            'Expected Exception Class' => AllDefaultSeparatingStrategiesAreInvalidException::class,
+            'Expected Exception Message' => 'All Default Separating Strategies are invalid',
+            'Expected Logger Message' => 'Default strategy default-groups is invalid. With Exception - TestSeparator\Exception\Strategy\PathToDefaultGroupsIsEmptyException. Message: Path to Default Groups is empty',
+        ];
+
+        $invalidConfigurationArray3 = ConfigurationFixture::getValidConfigurationArray();
+        $invalidConfigurationArray3['default-separating-strategies'] = [
+            'default-groups',
+        ];
+        $invalidConfigurationArray3['default-groups-directory'] = 'tests/data/groups/';
+
+        yield 'All Default Strategies are invalid. Default groups directory is empty.' => [
+            'invalid Configuration' => new Configuration($invalidConfigurationArray3),
+            'Expected Exception Class' => AllDefaultSeparatingStrategiesAreInvalidException::class,
+            'Expected Exception Message' => 'All Default Separating Strategies are invalid',
+            'Expected Logger Message' => 'Default strategy default-groups is invalid. With Exception - TestSeparator\Exception\Strategy\CodeceptionReportsDirIsEmptyException. Message: Default groups directory is empty.',
         ];
     }
 
@@ -213,11 +252,30 @@ class ConfigurationValidatorTest extends TestCase
 
         $configurationArray1 = $configurationArray;
         $configurationArray1['separating-strategy'] = 'codeception-report';
+        $configurationArray1['default-separating-strategies'] = [
+            'method-size',
+        ];
         $configurationArray1['use-default-separating-strategy'] = true;
 
         yield 'Check that codeception-report change to method-size' => [
             'Configuration' => new Configuration($configurationArray1),
             'Expected Strategy' => 'method-size',
+        ];
+
+        $configurationArray2 = $configurationArray;
+        $configurationArray2['separating-strategy'] = 'codeception-report';
+        $configurationArray2['default-separating-strategies'] = [
+            'default-groups',
+            'method-size',
+        ];
+        $configurationArray2['default-groups-directory'] = 'tests/data/default-groups/';
+
+        $configurationArray2['use-default-separating-strategy'] = true;
+        $configurationArray2['test-suites-directories'] = [];
+
+        yield 'Check that codeception-report change to default-groups' => [
+            'Configuration' => new Configuration($configurationArray2),
+            'Expected Strategy' => 'default-groups',
         ];
     }
 }
