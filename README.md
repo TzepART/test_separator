@@ -24,7 +24,7 @@ Add configuration file `config/test_separator.yml`, which contents:
 test_separator:
   separating-strategy: 'codeception-report'
   use-default-separating-strategy: false
-  codeception-reports-directory: '/path/to/file/with/codeception/test/'
+  codeception-reports-directory: '/path/to/file/with/codeception/reports/'
   tests-directory: '/path/to/project/tests/'
   result-path: '/path/to/project/file/groups/'
   level: 'method'

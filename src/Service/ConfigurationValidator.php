@@ -36,7 +36,7 @@ class ConfigurationValidator
     private const CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Codeception Reports directory is empty.';
 
 
-    public function validate(Configuration $configuration): void
+    public function validate(Configuration $configuration): bool
     {
         if (!is_dir($configuration->getTestsDirectory())) {
             throw new InvalidPathToTestsDirectoryException(self::PATH_TO_TESTS_DIRECTORY_IS_INVALID);
@@ -67,6 +67,8 @@ class ConfigurationValidator
             }
             //TODO add validation that all Tests Suites Directories contain tests (?)
         }
+
+        return true;
     }
 
     /**

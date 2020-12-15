@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\Handler;
 
 use Symfony\Component\Yaml\Exception\ParseException;
+use Tests\Fixtures\ConfigurationFixture;
 use TestSeparator\Exception\ConfigurationFileDoesNotExist;
 use TestSeparator\Exception\ErrorWhileParsingConfigurationFile;
 use TestSeparator\Handler\ConfigurationFactory;
@@ -27,21 +28,7 @@ class ConfigurationFactoryTest extends TestCase
     {
         yield [
             'Config file path' => 'tests/data/config/valid_config.yml',
-            'Expected config array' => [
-                'separating-strategy' => 'codeception-report',
-                'use-default-separating-strategy' => false,
-                'codeception-reports-directory' => '/path/to/file/with/codeception/test/',
-                'tests-directory' => '/path/to/project/tests/',
-                'result-path' => '/path/to/project/file/groups/',
-                'level' => 'method',
-                'test-suites-directories' => [
-                    'list',
-                    'sub-directories',
-                    'with',
-                    'test-suites',
-
-                ],
-            ]
+            'Expected config array' => ConfigurationFixture::getDummyValidConfigurationArray()
         ];
     }
 
@@ -110,28 +97,19 @@ class ConfigurationFactoryTest extends TestCase
     public function dataMakeConfigurationOk(): iterable
     {
         yield [
-            'Initial config values' => [
-                'separating-strategy' => 'codeception-report',
-                'use-default-separating-strategy' => true,
-                'codeception-reports-directory' => '/tests-separator-data/reports/',
-                'tests-directory' => '/tests-separator-data/tests/',
-                'result-path' => '/tests-separator-data/groups/',
-                'level' => 'method',
-                'test-suites-directories' => [
-                    'one',
-                    'two',
-                ],
-            ],
+            'Initial config values' => ConfigurationFixture::getDummyValidConfigurationArray(),
             'Configuration field values' => [
                 'separatingStrategy' => 'codeception-report',
                 'useDefaultSeparatingStrategy' => true,
-                'codeceptionReportsDir' => '/tests-separator-data/reports/',
-                'testsDirectory' => '/tests-separator-data/tests/',
-                'resultPath' => '/tests-separator-data/groups/',
+                'codeceptionReportsDir' => '/path/to/file/with/codeception/reports/',
+                'testsDirectory' => '/path/to/project/tests/',
+                'resultPath' => '/path/to/project/file/groups/',
                 'depthLevel' => 'method',
                 'testSuitesDirectories' => [
-                    'one',
-                    'two',
+                    'list',
+                    'sub-directories',
+                    'with',
+                    'test-suites',
                 ],
             ]
         ];
