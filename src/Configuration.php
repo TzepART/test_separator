@@ -41,6 +41,11 @@ class Configuration
     private $testSuitesDirectories;
 
     /**
+     * @var array
+     */
+    private $defaultSeparatingStrategies;
+
+    /**
      * Configuration constructor.
      *
      * @param array $config
@@ -56,6 +61,7 @@ class Configuration
         $this->resultPath = $config['result-path'] ?? '';
         $this->depthLevel = $config['level'] ?? '';
         $this->testSuitesDirectories = $config['test-suites-directories'] ?? [];
+        $this->defaultSeparatingStrategies = $config['default-separating-strategies'] ?? [];
     }
 
 
@@ -121,5 +127,13 @@ class Configuration
     public function getTestSuitesDirectories(): array
     {
         return $this->testSuitesDirectories;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultSeparatingStrategies(): array
+    {
+        return $this->defaultSeparatingStrategies;
     }
 }

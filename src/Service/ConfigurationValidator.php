@@ -3,21 +3,28 @@ declare(strict_types=1);
 
 namespace TestSeparator\Service;
 
+use Psr\Log\LoggerInterface;
 use TestSeparator\Configuration;
-use TestSeparator\Exception\CodeceptionReportsDirIsEmptyException;
+use TestSeparator\Exception\Strategy\AllDefaultSeparatingStrategiesAreInvalidException;
+use TestSeparator\Exception\Strategy\CodeceptionReportsDirIsEmptyException;
+use TestSeparator\Exception\DefaultSeparatingStrategiesNotFoundOrEmptyException;
 use TestSeparator\Exception\InvalidPathToResultDirectoryException;
 use TestSeparator\Exception\InvalidPathToTestsDirectoryException;
 use TestSeparator\Exception\NotAvailableDepthLevelException;
-use TestSeparator\Exception\PathToCodeceptionReportsDirIsEmptyException;
-use TestSeparator\Exception\SuitesDirectoriesCollectionIsEmptyException;
+use TestSeparator\Exception\Strategy\PathToCodeceptionReportsDirIsEmptyException;
+use TestSeparator\Exception\Strategy\SuitesDirectoriesCollectionIsEmptyException;
+use TestSeparator\Exception\Strategy\ValidationOfStrategyConfigurationException;
 use TestSeparator\Exception\UnknownSeparatingStrategyException;
-use TestSeparator\Exception\ValidationOfConfigurationException;
 use TestSeparator\Handler\ServicesSeparateTestsFactory;
 
 class ConfigurationValidator
 {
     private const AVAILABLE_SEPARATING_STRATEGIES = [
         ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY,
+        ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY,
+    ];
+
+    private const AVAILABLE_DEFAULT_SEPARATING_STRATEGIES = [
         ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY,
     ];
 
@@ -34,6 +41,22 @@ class ConfigurationValidator
     private const TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY = 'Tests suites directories Collection is empty.';
     private const PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Path to Codeception Reports directory is empty.';
     private const CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY = 'Codeception Reports directory is empty.';
+    private const DEFAULT_SEPARATING_STRATEGIES_NOT_FOUND_OR_EMPTY = 'Default separating strategies not found or empty';
+    private const THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY = 'There was got unknown default separating strategy.';
+    private const ALL_DEFAULT_SEPARATING_STRATEGIES_ARE_INVALID = 'All Default Separating Strategies are invalid';
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * ConfigurationValidator constructor.
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
 
     public function validate(Configuration $configuration): bool
@@ -51,42 +74,89 @@ class ConfigurationValidator
         }
 
         try {
-            $this->validateConfigurationForSeparatingByReports($configuration);
-        } catch (ValidationOfConfigurationException $e) {
+            $this->validateStrategy($configuration->getSeparatingStrategy(), $configuration);
+        } catch (ValidationOfStrategyConfigurationException $e) {
             if ($configuration->isUseDefaultSeparatingStrategy()) {
-                $configuration->setSeparatingStrategy(ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY);
+                $initialStrategy = $configuration->getSeparatingStrategy();
+                if (!is_array($configuration->getDefaultSeparatingStrategies()) || count($configuration->getDefaultSeparatingStrategies()) === 0) {
+                    throw new DefaultSeparatingStrategiesNotFoundOrEmptyException(self::DEFAULT_SEPARATING_STRATEGIES_NOT_FOUND_OR_EMPTY);
+                }
+
+                foreach ($configuration->getDefaultSeparatingStrategies() as $defaultSeparatingStrategy) {
+                    try {
+                        $this->validateDefaultStrategy($defaultSeparatingStrategy, $configuration);
+                        $configuration->setSeparatingStrategy($defaultSeparatingStrategy);
+                        break;
+                    } catch (ValidationOfStrategyConfigurationException $e) {
+                        $this->logger->notice(sprintf('Default strategy %s is invalid', $defaultSeparatingStrategy));
+                    }
+                }
+
+                if ($initialStrategy === $configuration->getSeparatingStrategy()) {
+                    throw new AllDefaultSeparatingStrategiesAreInvalidException(self::ALL_DEFAULT_SEPARATING_STRATEGIES_ARE_INVALID);
+                }
             } else {
                 throw $e;
             }
-        }
-
-        $separatingStrategy = $configuration->getSeparatingStrategy();
-        if ($separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
-            if (count($configuration->getTestSuitesDirectories()) === 0) {
-                throw new SuitesDirectoriesCollectionIsEmptyException(self::TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY);
-            }
-            //TODO add validation that all Tests Suites Directories contain tests (?)
         }
 
         return true;
     }
 
     /**
+     * @param string $separatingStrategy
      * @param Configuration $configuration
      */
-    private function validateConfigurationForSeparatingByReports(Configuration $configuration): void
+    private function validateStrategy(string $separatingStrategy, Configuration $configuration): void
     {
-        if (!in_array($configuration->getSeparatingStrategy(), self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
+        if (!in_array($separatingStrategy, self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
             throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY);
         }
 
-        if ($configuration->getSeparatingStrategy() === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
-            if ($configuration->getCodeceptionReportsDir() === '') {
-                throw new PathToCodeceptionReportsDirIsEmptyException(self::PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
-            }
-            if (!FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())) {
-                throw new CodeceptionReportsDirIsEmptyException(self::CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
-            }
+        if ($separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
+            $this->validateMethodSizeStrategy($configuration);
+        } elseif ($separatingStrategy === ServicesSeparateTestsFactory::CODECEPTION_SEPARATING_STRATEGY) {
+            $this->validateCodeceptionSeparatingStrategy($configuration);
+        }
+    }
+
+    /**
+     * @param string $separatingStrategy
+     * @param Configuration $configuration
+     */
+    private function validateDefaultStrategy(string $separatingStrategy, Configuration $configuration): void
+    {
+        if (!in_array($separatingStrategy, self::AVAILABLE_DEFAULT_SEPARATING_STRATEGIES, true)) {
+            throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY);
+        }
+
+        if ($separatingStrategy === ServicesSeparateTestsFactory::METHOD_SIZE_SEPARATING_STRATEGY) {
+            $this->validateMethodSizeStrategy($configuration);
+        }
+    }
+
+    /**
+     * @param Configuration $configuration
+     */
+    private function validateMethodSizeStrategy(Configuration $configuration): void
+    {
+        if (count($configuration->getTestSuitesDirectories()) === 0) {
+            throw new SuitesDirectoriesCollectionIsEmptyException(self::TESTS_SUITES_DIRECTORIES_COLLECTION_IS_EMPTY);
+        }
+        //TODO add validation that all Tests Suites Directories contain tests (?)
+    }
+
+    /**
+     * @param Configuration $configuration
+     */
+    private function validateCodeceptionSeparatingStrategy(Configuration $configuration): void
+    {
+        if ($configuration->getCodeceptionReportsDir() === '') {
+            throw new PathToCodeceptionReportsDirIsEmptyException(self::PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
+        }
+
+        if (!FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())) {
+            throw new CodeceptionReportsDirIsEmptyException(self::CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
         }
     }
 }

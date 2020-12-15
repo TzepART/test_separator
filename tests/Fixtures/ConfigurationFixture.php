@@ -18,6 +18,9 @@ class ConfigurationFixture
                 'functional',
                 'unit',
             ],
+            'default-separating-strategies' => [
+                'method-size',
+            ]
         ];
     }
 
@@ -36,6 +39,9 @@ class ConfigurationFixture
                 'with',
                 'test-suites',
             ],
+            'default-separating-strategies' => [
+                'method-size',
+            ]
         ];
     }
 }

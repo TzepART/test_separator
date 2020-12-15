@@ -10,3 +10,5 @@ test_separator:
     - 'sub-directories'
     - 'with'
     - 'test-suites'
+  default-separating-strategies:
+    - 'method-size'

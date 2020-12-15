@@ -18,7 +18,7 @@ $logger = new Logger();
 try {
     // TODO use standard symfony configuration
     $configArray = ConfigurationFactory::makeConfigurationArrayByFile('config/test_separator.yml');
-    $configuration = ConfigurationFactory::makeConfiguration($configArray, new ConfigurationValidator());
+    $configuration = ConfigurationFactory::makeConfiguration($configArray, new ConfigurationValidator($logger));
 
     $testsSeparator = TestsSeparatorFactory::makeTestsSeparator($configuration, $logger);
 
