@@ -159,6 +159,42 @@ class ConfigurationValidatorTest extends TestCase
     }
 
     /**
+     * @dataProvider dataValidateLoggerMessage()
+     *
+     * @param Configuration $configuration
+     * @param string $expectedExceptionClass
+     * @param string $expectedExceptionMessage
+     * @param string $expectedLogMessage
+     */
+    public function testValidateLoggerMessage(
+        Configuration $configuration,
+        string $expectedExceptionClass,
+        string $expectedExceptionMessage,
+        string $expectedLogMessage
+    ): void {
+        $this->expectException($expectedExceptionClass);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->logger->expects($this->once())
+            ->method('notice')
+            ->with($expectedLogMessage);
+
+        (new ConfigurationValidator($this->logger))->validate($configuration);
+    }
+
+    public function dataValidateLoggerMessage()
+    {
+        $invalidConfigurationArray = ConfigurationFixture::getValidConfigurationArray();
+        $invalidConfigurationArray['test-suites-directories'] = [];
+
+        yield 'All Default Separating Strategies are invalid' => [
+            'invalid Configuration' => new Configuration($invalidConfigurationArray),
+            'Expected Exception Class' => AllDefaultSeparatingStrategiesAreInvalidException::class,
+            'Expected Exception Message' => 'All Default Separating Strategies are invalid',
+            'Expected Logger Message' => 'Default strategy method-size is invalid',
+        ];
+    }
+
+    /**
      * @dataProvider dataValidateWithChangingStrategy()
      *
      * @param Configuration $configuration

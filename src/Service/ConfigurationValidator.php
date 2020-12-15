@@ -52,6 +52,7 @@ class ConfigurationValidator
 
     /**
      * ConfigurationValidator constructor.
+     * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
     {
@@ -76,6 +77,7 @@ class ConfigurationValidator
         try {
             $this->validateStrategy($configuration->getSeparatingStrategy(), $configuration);
         } catch (ValidationOfStrategyConfigurationException $e) {
+            // TODO move this logic in Service
             if ($configuration->isUseDefaultSeparatingStrategy()) {
                 $initialStrategy = $configuration->getSeparatingStrategy();
                 if (!is_array($configuration->getDefaultSeparatingStrategies()) || count($configuration->getDefaultSeparatingStrategies()) === 0) {
