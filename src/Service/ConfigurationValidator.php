@@ -155,7 +155,7 @@ class ConfigurationValidator
             throw new PathToCodeceptionReportsDirIsEmptyException(self::PATH_TO_CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
         }
 
-        if (!FileSystemHelper::checkFilesInDir($configuration->getCodeceptionReportsDir())) {
+        if (!FileSystemHelper::checkNotEmptyFilesInDir($configuration->getCodeceptionReportsDir())) {
             throw new CodeceptionReportsDirIsEmptyException(self::CODECEPTION_REPORTS_DIRECTORY_IS_EMPTY);
         }
     }
@@ -166,7 +166,7 @@ class ConfigurationValidator
             throw new PathToDefaultGroupsIsEmptyException(self::PATH_TO_DEFAULT_GROUPS_IS_EMPTY);
         }
 
-        if (!FileSystemHelper::checkFilesInDir($configuration->getDefaultGroupsDir())) {
+        if (!FileSystemHelper::checkNotEmptyFilesInDir($configuration->getDefaultGroupsDir())) {
             throw new CodeceptionReportsDirIsEmptyException(self::DEFAULT_GROUPS_DIRECTORY_IS_EMPTY);
         }
     }

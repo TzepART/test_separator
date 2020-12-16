@@ -5,6 +5,7 @@ namespace TestSeparator\Handler;
 
 use Psr\Log\LoggerInterface;
 use TestSeparator\Configuration;
+use TestSeparator\Service\FileSystemHelper;
 
 class TestsSeparatorFactory
 {
