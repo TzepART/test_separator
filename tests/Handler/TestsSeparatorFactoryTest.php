@@ -25,10 +25,10 @@ class TestsSeparatorFactoryTest extends TestCase
         $configuration->expects($this->once())
             ->method('getTestSuitesDirectories')
             ->willReturn([]);
-        $configuration->expects($this->once())
+        $configuration->expects($this->exactly(2))
             ->method('getTestsDirectory')
-            ->willReturn('');
-        $configuration->expects($this->at(2))
+            ->willReturn('tests/');
+        $configuration->expects($this->exactly(3))
             ->method('getSeparatingStrategy')
             ->willReturn('method-size');
         $configuration->expects($this->once())

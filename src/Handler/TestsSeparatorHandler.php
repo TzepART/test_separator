@@ -85,11 +85,10 @@ class TestsSeparatorHandler implements TestsSeparatorInterface
             $filePath = $this->getGroupDirectoryPath() . $groupName . '.txt';
 
             foreach ($arGroupBlockInfo->getDirTimes() as $localTestsDir => $time) {
-                $separatedEntity = $localTestsDir . PHP_EOL;
-                if ($this->separatedEntityValidator->validateSeparatedEntity($separatedEntity)) {
-                    file_put_contents($filePath, $separatedEntity, FILE_APPEND);
+                if ($this->separatedEntityValidator->validateSeparatedEntity($localTestsDir)) {
+                    file_put_contents($filePath, $localTestsDir . PHP_EOL, FILE_APPEND);
                 } else {
-                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', $separatedEntity, $filePath));
+                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', $localTestsDir, $filePath));
                 }
             }
 

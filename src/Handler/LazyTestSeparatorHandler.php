@@ -62,7 +62,7 @@ class LazyTestSeparatorHandler implements TestsSeparatorInterface
                 if ($this->separatedEntityValidator->validateSeparatedEntity($separatedEntity)) {
                     file_put_contents($resultFilePath, $separatedEntity, FILE_APPEND);
                 } else {
-                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', $separatedEntity, $filePath));
+                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', trim($separatedEntity), $filePath));
                 }
             }
         }

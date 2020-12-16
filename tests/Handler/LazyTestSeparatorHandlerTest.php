@@ -39,12 +39,19 @@ class LazyTestSeparatorHandlerTest extends TestCase
      */
     private $entityValidator;
 
+
+    /**
+     * @var string
+     */
+    private $testsPath;
+
     protected function setUp()
     {
         parent::setUp();
 
         $this->defaultGroupsPath = 'tests/data/default-groups/';
         $this->resultPath = 'tests/data/groups/';
+        $this->testsPath = 'tests/';
 
         /** @var Logger|MockObject $logger */
         $this->logger = $this->createMock(Logger::class);
@@ -52,7 +59,7 @@ class LazyTestSeparatorHandlerTest extends TestCase
         /** @var Configuration|MockObject $configuration */
         $this->configuration = $this->createMock(Configuration::class);
 
-        $this->entityValidator = new SeparatedEntityValidator();
+        $this->entityValidator = new SeparatedEntityValidator($this->testsPath);
 
         FileSystemHelper::removeAllFilesInDirectory($this->resultPath);
     }

@@ -9,8 +9,20 @@ class SeparatedEntityValidator
     private const CLASS_TYPE = 'class';
     private const METHOD_TYPE = 'method';
 
+    private $testsDirectory;
+
+    /**
+     * SeparatedEntityValidator constructor.
+     * @param string $testsDirectory
+     */
+    public function __construct(string $testsDirectory)
+    {
+        $this->testsDirectory = $testsDirectory;
+    }
+
     public function validateSeparatedEntity(string $separatedEntity): bool
     {
+        $separatedEntity = trim(str_replace('tests/', $this->testsDirectory, $separatedEntity));
         switch ($this->getEntityType($separatedEntity)) {
             case self::DIRECTORY_TYPE:
             case self::CLASS_TYPE:
