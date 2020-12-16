@@ -1,16 +1,14 @@
 test_separator:
-  separating-strategy: 'codeception-report'
+  separating-strategy 'codeception-report'
   use-default-separating-strategy: false
   codeception-reports-directory: '/path/to/file/with/codeception/reports/'
   tests-directory: '/path/to/project/tests/'
   result-path: '/path/to/project/file/groups/'
   level: 'method'
   test-suites-directories:
-      - 'list'
-      - 'sub-directories'
-      - 'with'
-      - 'test-suites'
+    - 'list'
+    - 'sub-directories'
+    - 'with'
+    - 'test-suites'
   default-separating-strategies:
     - 'method-size'
-    - 'default-groups'
-  default-groups-directory: '/path/to/directory/with/defaults/groups/'

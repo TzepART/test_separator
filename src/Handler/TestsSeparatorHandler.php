@@ -11,8 +11,13 @@ use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
-class SeparateTestsHandler
+class TestsSeparatorHandler implements TestsSeparatorInterface
 {
+    /**
+     * @var string
+     */
+    private $groupPrefix = 'time_group_';
+
     /**
      * @var ItemTestCollectionBuilderInterface&LoggerAwareTrait
      */
@@ -44,8 +49,7 @@ class SeparateTestsHandler
         DepthLevelStrategyInterface $timeCounterStrategy,
         string $resultPath,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->itemTestCollectionBuilder = $itemTestCollectionBuilder;
         $this->timeCounterStrategy = $timeCounterStrategy;
         $this->resultPath = $resultPath;
@@ -54,13 +58,46 @@ class SeparateTestsHandler
         $this->timeCounterStrategy->setLogger($logger);
     }
 
-    public function buildTestInfoCollection(): array
+    /**
+     * @param int $countSuit
+     */
+    public function separateTests(int $countSuit): void
+    {
+        $testInfoCollection = $this->buildTestInfoCollection();
+        $entityWithTime = $this->groupTimeEntityWithCountedTime($testInfoCollection);
+        $arGroups = $this->separateDirectoriesByTime($entityWithTime, $countSuit);
+
+        // remove all group files
+        $this->removeAllGroupFiles();
+
+        /** @var GroupBlockInfo $arGroupBlockInfo */
+        foreach ($arGroups as $groupNumber => $arGroupBlockInfo) {
+            $groupName = $this->groupPrefix . $groupNumber;
+            $filePath = $this->getGroupDirectoryPath() . $groupName . '.txt';
+
+            foreach ($arGroupBlockInfo->getDirTimes() as $localTestsDir => $time) {
+                file_put_contents($filePath, $localTestsDir . PHP_EOL, FILE_APPEND);
+            }
+
+            if (file_exists($filePath)) {
+                if (!filesize($filePath)) {
+                    $this->logger->info(sprintf('File for %s is empty.', $groupName));
+                } else {
+                    $this->logger->info(sprintf('File for %s was created successfully.', $groupName));
+                }
+            } else {
+                $this->logger->notice(sprintf('File for %s doesn\'t exist.', $groupName));
+            }
+        }
+    }
+
+    private function buildTestInfoCollection(): array
     {
         $this->logger->info(sprintf('ItemTestCollectionBuilder - %s', get_class($this->itemTestCollectionBuilder)));
         return $this->itemTestCollectionBuilder->buildTestInfoCollection();
     }
 
-    public function groupTimeEntityWithCountedTime($testInfoItems): array
+    private function groupTimeEntityWithCountedTime($testInfoItems): array
     {
         $this->logger->info(sprintf('DepthLevelStrategy - %s', get_class($this->timeCounterStrategy)));
         return $this->timeCounterStrategy->groupTimeEntityWithCountedTime($testInfoItems);
@@ -73,7 +110,7 @@ class SeparateTestsHandler
      * @return array
      * TODO add test
      */
-    public function separateDirectoriesByTime(array $timeResults, int $countSuit): array
+    private function separateDirectoriesByTime(array $timeResults, int $countSuit): array
     {
         $timeResults = $this->updateForUniqueValues($timeResults);
 
@@ -102,12 +139,12 @@ class SeparateTestsHandler
         return $groupBlockInfoItems;
     }
 
-    public function removeAllGroupFiles(): void
+    private function removeAllGroupFiles(): void
     {
         FileSystemHelper::removeAllFilesInDirectory($this->getGroupDirectoryPath());
     }
 
-    public function getGroupDirectoryPath(): string
+    private function getGroupDirectoryPath(): string
     {
         return $this->resultPath;
     }

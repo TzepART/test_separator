@@ -22,9 +22,9 @@ composer require tzepart/test-separator
 Add configuration file `config/test_separator.yml`, which contents:
 ```yaml
 test_separator:
-  separating-strategy: 'codeception-report'
+  separating-strategy: 'default-groups'
   use-default-separating-strategy: false
-  codeception-reports-directory: '/path/to/file/with/codeception/test/'
+  codeception-reports-directory: '/path/to/file/with/codeception/reports/'
   tests-directory: '/path/to/project/tests/'
   result-path: '/path/to/project/file/groups/'
   level: 'method'
@@ -33,13 +33,18 @@ test_separator:
       - 'sub-directories'
       - 'with'
       - 'test-suites'
+  default-separating-strategies:
+    - 'method-size'
+    - 'default-groups'
+  default-groups-directory: '/path/to/directory/with/defaults/groups/'
 ```
 
 Parameter **separating-strategy** can be one of these values:
 * codeception-report
 * method-size
 
-If parameter **use-default-separating-strategy: true** than, if we can't use **codeception-report** strategy we'll try use default strategy (**method-size**)
+If parameter **use-default-separating-strategy: true** than, if we can't use **codeception-report** strategy we'll try use 
+default strategies (**method-size** or **default-groups**)
 
 Parameter **tests-directory** - path to directory where is yours tests
 
@@ -60,5 +65,5 @@ Where "6" - groups count
 ## Develop section
 Run test
 ```
-./vendor/bin/phpunit --bootstrap vendor/autoload.php
+./vendor/bin/phpunit --bootstrap vendor/autoload.php tests
 ``` 

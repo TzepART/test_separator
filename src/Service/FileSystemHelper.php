@@ -5,17 +5,16 @@ namespace TestSeparator\Service;
 
 class FileSystemHelper
 {
-    public static function checkFilesInDir(string $directoryPath): bool
+    const EXCLUDED_FILES = [
+        '.',
+        '..',
+        '.gitkeep',
+    ];
+
+    public static function checkNotEmptyFilesInDir(string $directoryPath): bool
     {
         if (is_dir($directoryPath)) {
-            return count(
-                    array_filter(
-                        scandir($directoryPath),
-                        static function (string $fileName) {
-                            return !in_array($fileName, ['.', '..', '.gitkeep']);
-                        }
-                    )
-                ) > 0;
+            return self::getCountNotEmptyFilesInDir($directoryPath) > 0;
         }
 
         return false;
@@ -26,8 +25,20 @@ class FileSystemHelper
         $files = scandir($directoryPath); // get all file names
         foreach ($files as $file) { // iterate files
             $filePath = $directoryPath . $file;
-            if (is_file($filePath)) {
+            if (is_file($filePath) && !in_array($file, self::EXCLUDED_FILES)) {
                 unlink($filePath); // delete file
+            }
+        }
+    }
+
+    public static function copyAllFilesFromDirToDir(string $directoryFrom, string $directoryTo): void
+    {
+        $files = scandir($directoryFrom); // get all file names
+        foreach ($files as $file) { // iterate files
+            $filePath = $directoryFrom . $file;
+            $filePathTo = $directoryTo . $file;
+            if (is_file($filePath) && !in_array($file, self::EXCLUDED_FILES)) {
+                copy($filePath, $filePathTo);
             }
         }
     }
@@ -38,11 +49,30 @@ class FileSystemHelper
         $filePaths = [];
         foreach ($files as $file) {
             $filePath = $workDir . $file;
-            if (is_file($filePath)) {
+            if (is_file($filePath) && !in_array($file, self::EXCLUDED_FILES)) {
                 $filePaths[] = $filePath;
             }
         }
 
         return $filePaths;
+    }
+
+    public static function getCountNotEmptyFilesInDir(string $directoryPath): int
+    {
+        return count(
+            array_filter(
+                scandir($directoryPath),
+                static function (string $fileName) use ($directoryPath){
+                    if(!in_array($fileName, self::EXCLUDED_FILES)){
+                        clearstatcache();
+                        if (filesize($directoryPath.$fileName)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            )
+        );
     }
 }

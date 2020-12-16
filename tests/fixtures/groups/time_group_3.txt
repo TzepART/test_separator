@@ -1,9 +1,0 @@
-tests/integration/Order
-tests/integration/Filter
-tests/integrationsoap/FulfilmentShipment
-tests/integration/Partner
-tests/integration/Validation
-tests/integration/Export
-tests/integration/Report
-tests/integrationsoap/StockState
-tests/integration/Tracking
