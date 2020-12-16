@@ -1,1 +1,2 @@
-Path/To/Test.php
+tests/data/tests/functional/FakeTest.php:fakeMethodTest
+tests/data/tests/functional/FakeTest.php

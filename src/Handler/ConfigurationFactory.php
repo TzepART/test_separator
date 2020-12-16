@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 use TestSeparator\Configuration;
 use TestSeparator\Exception\ConfigurationFileDoesNotExist;
 use TestSeparator\Exception\ErrorWhileParsingConfigurationFile;
-use TestSeparator\Service\ConfigurationValidator;
+use TestSeparator\Service\Validator\ConfigurationValidator;
 
 class ConfigurationFactory
 {

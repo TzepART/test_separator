@@ -6,11 +6,11 @@ namespace Tests\Handler;
 use PHPUnit\Framework\MockObject\MockObject;
 use TestSeparator\Configuration;
 use TestSeparator\Exception\NeededCountGroupsAndCountDefaultGroupsNotEqual;
-use TestSeparator\Exception\NeededCountGroupsAndCountResultGroupsNotEqual;
 use TestSeparator\Handler\LazyTestSeparatorHandler;
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Service\FileSystemHelper;
 use TestSeparator\Service\Logger;
+use TestSeparator\Service\Validator\SeparatedEntityValidator;
 
 class LazyTestSeparatorHandlerTest extends TestCase
 {
@@ -34,6 +34,11 @@ class LazyTestSeparatorHandlerTest extends TestCase
      */
     protected $configuration;
 
+    /**
+     * @var SeparatedEntityValidator
+     */
+    private $entityValidator;
+
     protected function setUp()
     {
         parent::setUp();
@@ -47,6 +52,8 @@ class LazyTestSeparatorHandlerTest extends TestCase
         /** @var Configuration|MockObject $configuration */
         $this->configuration = $this->createMock(Configuration::class);
 
+        $this->entityValidator = new SeparatedEntityValidator();
+
         FileSystemHelper::removeAllFilesInDirectory($this->resultPath);
     }
 
@@ -58,53 +65,40 @@ class LazyTestSeparatorHandlerTest extends TestCase
 
     public function testSeparateTestsOk()
     {
-        $countSuits = 1;
-
-        $this->configuration->expects($this->exactly(2))
-            ->method('getDefaultGroupsDir')
-            ->willReturn($this->defaultGroupsPath);
-
-        $this->configuration->expects($this->exactly(2))
-            ->method('getResultPath')
-            ->willReturn($this->resultPath);
-
-        $handler = new LazyTestSeparatorHandler($this->configuration, $this->logger);
-        $this->assertNull($handler->separateTests($countSuits));
-    }
-
-    public function testSeparateTestsFail()
-    {
-        $this->expectException(NeededCountGroupsAndCountDefaultGroupsNotEqual::class);
-        $this->expectExceptionMessage('Needed count groups and count default groups not equal. Expected - 2, got - 1.');
-
         $countSuits = 2;
 
         $this->configuration->expects($this->once())
             ->method('getDefaultGroupsDir')
             ->willReturn($this->defaultGroupsPath);
 
-        $handler = new LazyTestSeparatorHandler($this->configuration, $this->logger);
-        $handler->separateTests($countSuits);
-    }
-
-    public function testSeparateTestsFailAfterCopy()
-    {
-        $countSuits = 1;
-        file_put_contents($this->resultPath.'fake-file.txt', 'fake');
-
-        $this->expectException(NeededCountGroupsAndCountResultGroupsNotEqual::class);
-        $this->expectExceptionMessage('Needed count groups and count result groups not equal. Expected - 1, got - 2.');
-
-        $this->configuration->expects($this->exactly(2))
-            ->method('getDefaultGroupsDir')
-            ->willReturn($this->defaultGroupsPath);
-
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->once())
             ->method('getResultPath')
             ->willReturn($this->resultPath);
 
-        $handler = new LazyTestSeparatorHandler($this->configuration, $this->logger);
-        $handler->separateTests($countSuits);
+        $this->logger->expects($this->at(0))
+            ->method('warning')
+            ->with('Entity tests/data/tests/functional/FakeTest_invalid.php:fakeMethodTest in file tests/data/default-groups/time_group_1.txt is invalid.');
+
+        $this->logger->expects($this->at(1))
+            ->method('warning')
+            ->with('Needed count groups and count result groups not equal. Expected - 2, got - 1.');
+
+        $handler = new LazyTestSeparatorHandler($this->configuration, $this->entityValidator, $this->logger);
+        $this->assertNull($handler->separateTests($countSuits));
     }
 
+    public function testSeparateTestsFail()
+    {
+        $this->expectException(NeededCountGroupsAndCountDefaultGroupsNotEqual::class);
+        $this->expectExceptionMessage('Needed count groups and count default groups not equal. Expected - 3, got - 2.');
+
+        $countSuits = 3;
+
+        $this->configuration->expects($this->once())
+            ->method('getDefaultGroupsDir')
+            ->willReturn($this->defaultGroupsPath);
+
+        $handler = new LazyTestSeparatorHandler($this->configuration, $this->entityValidator, $this->logger);
+        $handler->separateTests($countSuits);
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace TestSeparator\Service;
+namespace TestSeparator\Service\Validator;
 
 use Psr\Log\LoggerInterface;
 use TestSeparator\Configuration;
@@ -17,6 +17,7 @@ use TestSeparator\Exception\Strategy\SuitesDirectoriesCollectionIsEmptyException
 use TestSeparator\Exception\Strategy\ValidationOfStrategyConfigurationException;
 use TestSeparator\Exception\UnknownSeparatingStrategyException;
 use TestSeparator\Handler\ServicesSeparateTestsFactory;
+use TestSeparator\Service\FileSystemHelper;
 
 class ConfigurationValidator
 {

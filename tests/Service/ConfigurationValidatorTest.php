@@ -14,7 +14,7 @@ use TestSeparator\Exception\InvalidPathToTestsDirectoryException;
 use TestSeparator\Exception\NotAvailableDepthLevelException;
 use TestSeparator\Exception\Strategy\PathToCodeceptionReportsDirIsEmptyException;
 use TestSeparator\Exception\UnknownSeparatingStrategyException;
-use TestSeparator\Service\ConfigurationValidator;
+use TestSeparator\Service\Validator\ConfigurationValidator;
 use PHPUnit\Framework\TestCase;
 use TestSeparator\Service\Logger;
 use \PHPUnit\Framework\MockObject\MockObject;
@@ -40,7 +40,7 @@ class ConfigurationValidatorTest extends TestCase
      */
     public function testValidateOk(Configuration $configuration): void
     {
-        $this->assertTrue((new ConfigurationValidator($this->logger))->validate($configuration));
+        $this->assertTrue((new \TestSeparator\Service\Validator\ConfigurationValidator($this->logger))->validate($configuration));
     }
 
     public function dataValidateOk(): iterable
@@ -241,7 +241,7 @@ class ConfigurationValidatorTest extends TestCase
      */
     public function testValidateWithChangingStrategy(Configuration $configuration, string $expectedStrategy): void
     {
-        (new ConfigurationValidator($this->logger))->validate($configuration);
+        (new \TestSeparator\Service\Validator\ConfigurationValidator($this->logger))->validate($configuration);
 
         $this->assertEquals($expectedStrategy, $configuration->getSeparatingStrategy());
     }

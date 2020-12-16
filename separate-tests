@@ -6,7 +6,7 @@ use Symfony\Component\Console\Application;
 use \TestSeparator\Command\SeparateTestsCommand;
 use \TestSeparator\Handler\TestsSeparatorFactory;
 use \TestSeparator\Handler\ConfigurationFactory;
-use \TestSeparator\Service\ConfigurationValidator;
+use TestSeparator\Service\Validator\ConfigurationValidator;
 use TestSeparator\Service\Logger;
 
 require 'vendor/autoload.php';

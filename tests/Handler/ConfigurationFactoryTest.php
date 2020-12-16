@@ -9,7 +9,7 @@ use TestSeparator\Exception\ConfigurationFileDoesNotExist;
 use TestSeparator\Exception\ErrorWhileParsingConfigurationFile;
 use TestSeparator\Handler\ConfigurationFactory;
 use PHPUnit\Framework\TestCase;
-use TestSeparator\Service\ConfigurationValidator;
+use TestSeparator\Service\Validator\ConfigurationValidator;
 
 class ConfigurationFactoryTest extends TestCase
 {
@@ -76,7 +76,7 @@ class ConfigurationFactoryTest extends TestCase
      */
     public function testMakeConfigurationOk(array $configArray, array $expectedFieldValues): void
     {
-        /** @var ConfigurationValidator $configurationValidator */
+        /** @var \TestSeparator\Service\Validator\ConfigurationValidator $configurationValidator */
         $configurationValidator = $this->createMock(ConfigurationValidator::class);
         $configurationValidator
             ->expects($this->once())

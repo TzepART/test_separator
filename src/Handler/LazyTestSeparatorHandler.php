@@ -6,8 +6,8 @@ namespace TestSeparator\Handler;
 use Psr\Log\LoggerInterface;
 use TestSeparator\Configuration;
 use TestSeparator\Exception\NeededCountGroupsAndCountDefaultGroupsNotEqual;
-use TestSeparator\Exception\NeededCountGroupsAndCountResultGroupsNotEqual;
 use TestSeparator\Service\FileSystemHelper;
+use TestSeparator\Service\Validator\SeparatedEntityValidator;
 
 class LazyTestSeparatorHandler implements TestsSeparatorInterface
 {
@@ -17,20 +17,33 @@ class LazyTestSeparatorHandler implements TestsSeparatorInterface
     private $configuration;
 
     /**
+     * @var SeparatedEntityValidator
+     */
+    private $separatedEntityValidator;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
 
-    public function __construct(Configuration $configuration, LoggerInterface $logger)
+    public function __construct(
+        Configuration $configuration,
+        SeparatedEntityValidator $separatedEntityValidator,
+        LoggerInterface $logger
+    )
     {
-        $this->logger = $logger;
         $this->configuration = $configuration;
+        $this->separatedEntityValidator = $separatedEntityValidator;
+        $this->logger = $logger;
     }
 
     public function separateTests(int $countSuit): void
     {
+        $defaultGroupsDir = $this->configuration->getDefaultGroupsDir();
+        $resultGroupsDir = $this->configuration->getResultPath();
+
         // validate that count files in $this->configuration->getDefaultGroupsDir() === $countSuit
-        $countDefaultGroups = FileSystemHelper::getCountNotEmptyFilesInDir($this->configuration->getDefaultGroupsDir());
+        $countDefaultGroups = FileSystemHelper::getCountNotEmptyFilesInDir($defaultGroupsDir);
         if ($countDefaultGroups !== $countSuit) {
             throw new NeededCountGroupsAndCountDefaultGroupsNotEqual(
                 sprintf('Needed count groups and count default groups not equal. Expected - %d, got - %d.',
@@ -40,13 +53,24 @@ class LazyTestSeparatorHandler implements TestsSeparatorInterface
             );
         }
 
-        // copy all files from $this->configuration->getDefaultGroupsDir() to $this->configuration->getResultPath()
-        FileSystemHelper::copyAllFilesFromDirToDir($this->configuration->getDefaultGroupsDir(), $this->configuration->getResultPath());
+        // copy all files from $defaultGroupsDir to $this->configuration->getResultPath()
+        $filePaths = FileSystemHelper::getFilePathsByDirectory($defaultGroupsDir);
+        foreach ($filePaths as $fileName => $filePath) {
+            $contentArray = file($filePath);
+            $resultFilePath = $resultGroupsDir . $fileName;
+            foreach ($contentArray as $separatedEntity) {
+                if ($this->separatedEntityValidator->validateSeparatedEntity($separatedEntity)) {
+                    file_put_contents($resultFilePath, $separatedEntity, FILE_APPEND);
+                } else {
+                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', $separatedEntity, $filePath));
+                }
+            }
+        }
 
         // check that list files in getDefaultGroupsDir() === list files in getResultPath()
-        $countResultGroups = FileSystemHelper::getCountNotEmptyFilesInDir($this->configuration->getResultPath());
+        $countResultGroups = FileSystemHelper::getCountNotEmptyFilesInDir($resultGroupsDir);
         if ($countResultGroups !== $countDefaultGroups) {
-            throw new NeededCountGroupsAndCountResultGroupsNotEqual(
+            $this->logger->warning(
                 sprintf('Needed count groups and count result groups not equal. Expected - %d, got - %d.',
                     $countDefaultGroups,
                     $countResultGroups

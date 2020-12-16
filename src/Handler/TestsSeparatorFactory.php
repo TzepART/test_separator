@@ -6,6 +6,7 @@ namespace TestSeparator\Handler;
 use Psr\Log\LoggerInterface;
 use TestSeparator\Configuration;
 use TestSeparator\Service\FileSystemHelper;
+use TestSeparator\Service\Validator\SeparatedEntityValidator;
 
 class TestsSeparatorFactory
 {
@@ -14,6 +15,7 @@ class TestsSeparatorFactory
         if ($configuration->getSeparatingStrategy() === ServicesSeparateTestsFactory::DEFAULT_GROUP_STRATEGY) {
             return new LazyTestSeparatorHandler(
                 $configuration,
+                new SeparatedEntityValidator(),
                 $logger
             );
         }
@@ -22,6 +24,7 @@ class TestsSeparatorFactory
             ServicesSeparateTestsFactory::makeTestFilePathHelper($configuration),
             ServicesSeparateTestsFactory::makeLevelDeepService($configuration->getDepthLevel()),
             $configuration->getResultPath(),
+            new SeparatedEntityValidator(),
             $logger
         );
     }

@@ -8,6 +8,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use TestSeparator\Model\GroupBlockInfo;
 use TestSeparator\Service\FileSystemHelper;
+use TestSeparator\Service\Validator\SeparatedEntityValidator;
 use TestSeparator\Strategy\ItemTestsBuildings\ItemTestCollectionBuilderInterface;
 use TestSeparator\Strategy\SeparationDepth\DepthLevelStrategyInterface;
 
@@ -34,6 +35,11 @@ class TestsSeparatorHandler implements TestsSeparatorInterface
     private $resultPath;
 
     /**
+     * @var SeparatedEntityValidator
+     */
+    private $separatedEntityValidator;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -42,17 +48,20 @@ class TestsSeparatorHandler implements TestsSeparatorInterface
      * @param ItemTestCollectionBuilderInterface&LoggerAwareTrait $itemTestCollectionBuilder
      * @param DepthLevelStrategyInterface&LoggerAwareTrait $timeCounterStrategy
      * @param string $resultPath
+     * @param SeparatedEntityValidator $separatedEntityValidator
      * @param LoggerInterface $logger
      */
     public function __construct(
         ItemTestCollectionBuilderInterface $itemTestCollectionBuilder,
         DepthLevelStrategyInterface $timeCounterStrategy,
         string $resultPath,
+        SeparatedEntityValidator $separatedEntityValidator,
         LoggerInterface $logger
     ) {
         $this->itemTestCollectionBuilder = $itemTestCollectionBuilder;
         $this->timeCounterStrategy = $timeCounterStrategy;
         $this->resultPath = $resultPath;
+        $this->separatedEntityValidator = $separatedEntityValidator;
         $this->logger = $logger;
         $this->itemTestCollectionBuilder->setLogger($logger);
         $this->timeCounterStrategy->setLogger($logger);
@@ -76,7 +85,12 @@ class TestsSeparatorHandler implements TestsSeparatorInterface
             $filePath = $this->getGroupDirectoryPath() . $groupName . '.txt';
 
             foreach ($arGroupBlockInfo->getDirTimes() as $localTestsDir => $time) {
-                file_put_contents($filePath, $localTestsDir . PHP_EOL, FILE_APPEND);
+                $separatedEntity = $localTestsDir . PHP_EOL;
+                if ($this->separatedEntityValidator->validateSeparatedEntity($separatedEntity)) {
+                    file_put_contents($filePath, $separatedEntity, FILE_APPEND);
+                } else {
+                    $this->logger->warning(sprintf('Entity %s in file %s is invalid.', $separatedEntity, $filePath));
+                }
             }
 
             if (file_exists($filePath)) {

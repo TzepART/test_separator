@@ -50,7 +50,7 @@ class FileSystemHelper
         foreach ($files as $file) {
             $filePath = $workDir . $file;
             if (is_file($filePath) && !in_array($file, self::EXCLUDED_FILES)) {
-                $filePaths[] = $filePath;
+                $filePaths[$file] = $filePath;
             }
         }
 
