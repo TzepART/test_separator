@@ -2,6 +2,8 @@
 
 Packagist - https://packagist.org/packages/tzepart/test-separator
 
+[Версия на русском](README-RUS.MD)
+
 ## Description:
 It is possible to divide the tests into groups based on:
 1. report.xml of [Codeception](https://codeception.com/) library
