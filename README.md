@@ -2,7 +2,7 @@
 
 Packagist - https://packagist.org/packages/tzepart/test-separator
 
-[Версия на русском](README-RUS.MD)
+[Версия на русском](README-RUS.md)
 
 ## Description:
 It is possible to divide the tests into groups based on:
