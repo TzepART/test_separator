@@ -65,7 +65,8 @@ class FileSystemHelper
                 static function (string $fileName) use ($directoryPath){
                     if(!in_array($fileName, self::EXCLUDED_FILES)){
                         clearstatcache();
-                        if (filesize($directoryPath.$fileName)) {
+                        $filePath = $directoryPath.$fileName;
+                        if (is_file($filePath) && !empty(trim(file_get_contents($filePath)))) {
                             return true;
                         }
                     }
