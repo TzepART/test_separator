@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: php:7.3
+    runs-on: php:7.3-alpine
 
     steps:
     - uses: actions/checkout@v2
