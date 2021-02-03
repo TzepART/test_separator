@@ -19,7 +19,6 @@ class GroupBlockInfo
      */
     private $summTime = 0;
 
-
     /**
      * @return array
      */
