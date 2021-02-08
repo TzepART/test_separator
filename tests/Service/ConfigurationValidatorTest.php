@@ -40,7 +40,7 @@ class ConfigurationValidatorTest extends TestCase
      */
     public function testValidateOk(Configuration $configuration): void
     {
-        $this->assertTrue((new \TestSeparator\Service\Validator\ConfigurationValidator($this->logger))->validate($configuration));
+        $this->assertTrue((new ConfigurationValidator($this->logger))->validate($configuration));
     }
 
     public function dataValidateOk(): iterable

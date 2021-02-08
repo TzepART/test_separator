@@ -5,6 +5,16 @@ namespace TestSeparator;
 
 class Configuration
 {
+    public const SEPARATING_STRATEGY_KEY = 'separating-strategy';
+    public const USE_DEFAULT_SEPARATING_STRATEGY_KEY = 'use-default-separating-strategy';
+    public const CODECEPTION_REPORTS_DIRECTORY_KEY = 'codeception-reports-directory';
+    public const TESTS_DIRECTORY_KEY = 'tests-directory';
+    public const RESULT_PATH_KEY = 'result-path';
+    public const LEVEL_KEY = 'level';
+    public const TEST_SUITES_DIRECTORIES_KEY = 'test-suites-directories';
+    public const DEFAULT_SEPARATING_STRATEGIES_KEY = 'default-separating-strategies';
+    public const DEFAULT_GROUPS_DIRECTORY_KEY = 'default-groups-directory';
+
     /**
      * @var string
      */
@@ -59,15 +69,15 @@ class Configuration
      */
     public function __construct(array $config)
     {
-        $this->separatingStrategy = $config['separating-strategy'] ?? '';
-        $this->useDefaultSeparatingStrategy = $config['use-default-separating-strategy'] ?? false;
-        $this->codeceptionReportsDir = $config['codeception-reports-directory'] ?? '';
-        $this->testsDirectory = $config['tests-directory'] ?? '';
-        $this->resultPath = $config['result-path'] ?? '';
-        $this->depthLevel = $config['level'] ?? '';
-        $this->testSuitesDirectories = $config['test-suites-directories'] ?? [];
-        $this->defaultSeparatingStrategies = $config['default-separating-strategies'] ?? [];
-        $this->defaultGroupsDir = $config['default-groups-directory'] ?? '';
+        $this->separatingStrategy = $config[self::SEPARATING_STRATEGY_KEY] ?? '';
+        $this->useDefaultSeparatingStrategy = $config[self::USE_DEFAULT_SEPARATING_STRATEGY_KEY] ?? false;
+        $this->codeceptionReportsDir = $config[self::CODECEPTION_REPORTS_DIRECTORY_KEY] ?? '';
+        $this->testsDirectory = $config[self::TESTS_DIRECTORY_KEY] ?? '';
+        $this->resultPath = $config[self::RESULT_PATH_KEY] ?? '';
+        $this->depthLevel = $config[self::LEVEL_KEY] ?? '';
+        $this->testSuitesDirectories = $config[self::TEST_SUITES_DIRECTORIES_KEY] ?? [];
+        $this->defaultSeparatingStrategies = $config[self::DEFAULT_SEPARATING_STRATEGIES_KEY] ?? [];
+        $this->defaultGroupsDir = $config[self::DEFAULT_GROUPS_DIRECTORY_KEY] ?? '';
     }
 
 

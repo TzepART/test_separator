@@ -8,16 +8,18 @@ use \TestSeparator\Handler\TestsSeparatorFactory;
 use \TestSeparator\Handler\ConfigurationFactory;
 use TestSeparator\Service\Validator\ConfigurationValidator;
 use TestSeparator\Service\Logger;
+use TestSeparator\Service\RewriteConfigurationService;
 
 require 'vendor/autoload.php';
 
 $application = new Application();
-
 $logger = new Logger();
 
 try {
     // TODO use standard symfony configuration
     $configArray = ConfigurationFactory::makeConfigurationArrayByFile('config/test_separator.yml');
+    $configArray = (new RewriteConfigurationService($argv))->updateRewritingOption($configArray);
+
     $configuration = ConfigurationFactory::makeConfiguration($configArray, new ConfigurationValidator($logger));
 
     $testsSeparator = TestsSeparatorFactory::makeTestsSeparator($configuration, $logger);
