@@ -62,17 +62,9 @@ class ConfigurationValidator
 
     public function validate(Configuration $configuration): bool
     {
-        if (!is_dir($configuration->getTestsDirectory())) {
-            throw new InvalidPathToTestsDirectoryException(self::PATH_TO_TESTS_DIRECTORY_IS_INVALID);
-        }
-
-        if (!is_dir($configuration->getResultPath())) {
-            throw new InvalidPathToResultDirectoryException(self::PATH_TO_RESULTS_DIRECTORY_IS_INVALID);
-        }
-
-        if (!in_array($configuration->getDepthLevel(), self::AVAILABLE_DEPTH_LEVELS, true)) {
-            throw new NotAvailableDepthLevelException(self::NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT);
-        }
+        $this->validateTestsDirectory($configuration->getTestsDirectory());
+        $this->validateResultPath($configuration->getResultPath());
+        $this->validateDepthLevel($configuration->getDepthLevel());
 
         try {
             $this->validateStrategy($configuration->getSeparatingStrategy(), $configuration);
@@ -112,7 +104,28 @@ class ConfigurationValidator
         return true;
     }
 
-    private function validateStrategy(string $separatingStrategy, Configuration $configuration): void
+    public function validateTestsDirectory(string $testsDirectory): void
+    {
+        if (!is_dir($testsDirectory)) {
+            throw new InvalidPathToTestsDirectoryException(self::PATH_TO_TESTS_DIRECTORY_IS_INVALID);
+        }
+    }
+
+    public function validateResultPath(string $resultPath): void
+    {
+        if (!is_dir($resultPath)) {
+            throw new InvalidPathToResultDirectoryException(self::PATH_TO_RESULTS_DIRECTORY_IS_INVALID);
+        }
+    }
+
+    public function validateDepthLevel(string $depthLevel): void
+    {
+        if (!in_array($depthLevel, self::AVAILABLE_DEPTH_LEVELS, true)) {
+            throw new NotAvailableDepthLevelException(self::NOT_AVAILABLE_DEPTH_LEVEL_WAS_GOT);
+        }
+    }
+
+    public function validateStrategy(string $separatingStrategy, Configuration $configuration): void
     {
         if (!in_array($separatingStrategy, self::AVAILABLE_SEPARATING_STRATEGIES, true)) {
             throw new UnknownSeparatingStrategyException(self::THERE_WAS_GOT_UNKNOWN_SEPARATING_STRATEGY);
@@ -127,7 +140,7 @@ class ConfigurationValidator
         }
     }
 
-    private function validateDefaultStrategy(string $separatingStrategy, Configuration $configuration): void
+    public function validateDefaultStrategy(string $separatingStrategy, Configuration $configuration): void
     {
         if (!in_array($separatingStrategy, self::AVAILABLE_DEFAULT_SEPARATING_STRATEGIES, true)) {
             throw new UnknownSeparatingStrategyException(sprintf(self::THERE_WAS_GOT_UNKNOWN_DEFAULT_SEPARATING_STRATEGY, $separatingStrategy));

@@ -66,6 +66,16 @@ Parameter **level** can be one of these values:
 
 Where "6" - groups count
 
+For the convenience of debugging, you can overwrite some configuration parameters when running the command, namely:
+- codeception-reports-directory
+- result-path
+- separating-strategy
+
+Example:
+```
+./separate-tests separate 5 --result-path=/data/tests-separator-data/groups_2/ --codeception-reports-directory=/data/tests-separator-data/reports_2/
+```
+
 ## Develop section
 Run test
 ```

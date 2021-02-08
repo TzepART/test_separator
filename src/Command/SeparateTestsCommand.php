@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TestSeparator\Configuration;
 use TestSeparator\Handler\TestsSeparatorHandler;
 use TestSeparator\Handler\TestsSeparatorInterface;
 
@@ -39,6 +40,9 @@ class SeparateTestsCommand extends Command
         $this
             ->setDescription('Separate Tests on several time groups.')
             ->addArgument('count_group', InputArgument::REQUIRED, 'The count of time groups.')
+            ->addOption(Configuration::CODECEPTION_REPORTS_DIRECTORY_KEY, null, InputArgument::OPTIONAL, '')
+            ->addOption(Configuration::RESULT_PATH_KEY, null, InputArgument::OPTIONAL, '')
+            ->addOption(Configuration::SEPARATING_STRATEGY_KEY, null, InputArgument::OPTIONAL, '')
             ->setHelp('This command allows you to separate tests...');
     }
 
